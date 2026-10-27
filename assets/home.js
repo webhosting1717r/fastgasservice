@@ -1,4 +1,4 @@
-/* Fastgas Service NL homepage engine (moved out of index.html in v41e). Patches target this file. */
+/* Fastgas Service NL homepage engine (moved out of index.html in v41e). Patches target this file. v51: still first shot, engine wakes on input. */
 (function(){
 'use strict';
 const hero=document.getElementById('hero'), stage=document.getElementById('stage'), video=document.getElementById('video'), canvas=document.getElementById('canvas'), poster=document.getElementById('poster'), ring=document.getElementById('ring'), bar=document.getElementById('progressBar');
@@ -15,37 +15,16 @@ requestAnimationFrame(()=>document.body.classList.add('ready'));
 /* Debug counters for the self-test harness (harmless in production) */
 const stats=window.__fg={draws:0,blends:0,misses:0,decodes:0,decodeMs:0,longFrames:0,frames:0};
 
-/* ---------- Load intro: wait for the display font (at most 900 ms), track the wordmark in, then send it into the header title ---------- */
-let posterReady=false; (function(){ const src=(useFramesEarly()?'assets/intro-poster-portrait':'assets/intro-poster')+'.webp'; const im=new Image(); im.onload=()=>{posterReady=true;window.__posterAt=Math.round(performance.now())}; im.onerror=()=>{posterReady=true}; im.fetchPriority='high'; im.src=src; setTimeout(()=>{posterReady=true},2500); })();
-function useFramesEarly(){ return matchMedia('(max-width: 720px) and (orientation: portrait)').matches||matchMedia('(orientation: portrait) and (pointer: coarse)').matches; }
-const intro=document.getElementById('intro');
-const finishIntro=()=>{document.body.classList.add('intro-done');document.body.classList.remove('intro-lock');document.documentElement.classList.remove('intro-lock')};
-if(intro){
-  if(reduce.matches){intro.remove();finishIntro();}
-  else{
-    document.body.classList.add('intro-lock'); document.documentElement.classList.add('intro-lock'); scrollTo(0,0);
-    const fontsReady=(document.fonts&&document.fonts.load)?Promise.race([document.fonts.load('800 1em "Barlow Condensed"'),new Promise(r=>setTimeout(r,1500))]):Promise.resolve();
-    fontsReady.then(()=>{ document.body.classList.add('fonts');
-      const typeLine=(el,delay,speed)=>{ const text=el.dataset.text||''; let c=0; const t=()=>{ c++; el.innerHTML=text.slice(0,c).replace(/(24\/7|20 minuten)/g,'<b>$1</b>'); if(c<text.length)setTimeout(t,speed+Math.random()*speed); else el.classList.add('done'); }; setTimeout(t,delay); };
-      typeLine(document.getElementById('hudTop'),700,13); typeLine(document.getElementById('hudMid'),1250,20);
-      const exitIntro=()=>{
-        const mark=intro.querySelector('.intro-mark'), hdr=document.getElementById('hdrMark');
-        intro.classList.add('out');
-        /* unlock first: removing overflow:hidden can relayout the page (iOS toolbar, safe area); measure only after that settled */
-        document.body.classList.remove('intro-lock'); document.documentElement.classList.remove('intro-lock'); scrollTo(0,0);
-        let landed=false; const land=()=>{ if(landed)return; landed=true; document.body.classList.add('mark-landing'); finishIntro(); mark.style.opacity='0'; try{ const r=hdr.getBoundingClientRect(); window.__handoff=Object.assign(window.__handoff||{},{b2:[r.left,r.top,r.width,r.height]}); }catch(e){} };
-        let measured=false; const go=()=>{ if(measured)return; measured=true;
-          let anim=null;
-          try{ const a=mark.getBoundingClientRect(), b=hdr.getBoundingClientRect(); const s=b.width/a.width, dx=b.left-a.left, dy=(b.top+b.height/2)-(a.top+a.height*s/2); /* scale from the text width; the header title sits in a taller padded box, so align the text centres */ window.__handoff={a:[a.left,a.top,a.width,a.height],b:[b.left,b.top,b.width,b.height],s,dx,dy,vw:innerWidth,vh:innerHeight};
-            mark.style.transformOrigin='0 0'; const end='translate('+dx.toFixed(2)+'px,'+dy.toFixed(2)+'px) scale('+s.toFixed(5)+')';
-            anim=mark.animate([{transform:'none',opacity:1},{transform:end,opacity:1,offset:.6},{transform:end,opacity:0}],{duration:1150,easing:'cubic-bezier(.6,0,.1,1)',fill:'forwards'});
-            const tick=()=>{ if(landed||document.body.classList.contains('mark-landing'))return; let pr=null; try{ pr=anim.effect.getComputedTiming().progress; }catch(e){} if(pr!=null&&pr>=0.6) document.body.classList.add('mark-landing'); else requestAnimationFrame(tick); }; requestAnimationFrame(tick); setTimeout(()=>document.body.classList.add('mark-landing'),1000); }catch(e){}
-          if(anim&&anim.finished) anim.finished.then(land,land); setTimeout(land,1250);
-        }; requestAnimationFrame(()=>requestAnimationFrame(go)); setTimeout(go,120); setTimeout(land,1500);
-        setTimeout(()=>intro.remove(),1800); };
-      const t0=performance.now(); const waitLive=()=>{ const ready=stage.classList.contains('live')||loadFrac>=0.999||posterReady; const dt=performance.now()-t0; if((ready&&dt>=2900)||dt>=5600){ if(loader){loader.style.setProperty('--p','1');introLine.style.setProperty('--p','1');} setTimeout(exitIntro,ready?250:0); } else setTimeout(waitLive,100); }; waitLive(); });
-  }
-} else finishIntro();
+/* ---------- v51: no intro overlay. The page opens on the still first shot with the intro text, header and contact buttons already in place; the footage engine wakes on the first input, or a few seconds after load on a good connection ---------- */
+let posterReady=true;
+document.body.classList.add('intro-done');
+let awake=false, pendingStart=null;
+const whenAwake=fn=>{ if(awake)fn(); else pendingStart=fn; };
+function wakeEngine(){ if(awake)return; awake=true; document.documentElement.classList.add('fg-go'); const f=pendingStart; pendingStart=null; if(f)f(); }
+['wheel','touchstart','pointerdown','pointermove','keydown','scroll'].forEach(ev=>addEventListener(ev,wakeEngine,{passive:true,once:true}));
+(function(){ const con=navigator.connection||{}; const saver=!!con.saveData||/(^|\b)(slow-2g|2g|3g)$/.test(con.effectiveType||'');
+  const later=()=>{ if(!saver)setTimeout(()=>{ if(!document.hidden)wakeEngine(); },8000); };
+  if(document.readyState==='complete')later(); else addEventListener('load',later,{once:true}); })();
 
 /* ---------- Engine choice: phones and portrait touch devices draw a frame sequence on a canvas; everything else scrubs the video ---------- */
 const FRAMES_MQ=['(max-width: 720px) and (orientation: portrait)','(orientation: portrait) and (pointer: coarse)'].map(q=>matchMedia(q));
@@ -104,7 +83,7 @@ function render(ps){
 /* ---------- Caption bands: smoothstep opacity at both edges, --k settles early in the band; DOM touched only on change ---------- */
 let band1Floor=1;
 const smoothstep=(p,e0,e1)=>{const t=clamp((p-e0)/(e1-e0),0,1);return t*t*(3-2*t)};
-const bands=Array.from(document.querySelectorAll('.band')).map(el=>({el,a:+el.dataset.a,b:+el.dataset.b,first:'first' in el.dataset,last:'last' in el.dataset,cta:'cta' in el.dataset,o:-1,k:-1,on:false}));
+const bands=Array.from(document.querySelectorAll('.band')).map(el=>({el,a:+el.dataset.a,b:+el.dataset.b,first:'first' in el.dataset,last:'last' in el.dataset,cta:'cta' in el.dataset,o:-1,k:-1,on:el.classList.contains('on')}));
 function updateBands(p){
   for(const bd of bands){
     const f=Math.min(0.02,(bd.b-bd.a)/3);
@@ -245,8 +224,8 @@ function applyMode(){
   webpOK.then(ok=>{ const ext=ok?'.webp':'.jpg'; poster.style.backgroundImage="url('"+(m==='frames'?'assets/intro-poster-portrait':'assets/intro-poster')+ext+"')"; });
   stage.classList.toggle('mode-video',m==='video'); stage.classList.toggle('mode-frames',m==='frames');
   stage.classList.remove('live');
-  if(m==='frames'){ lastKey=''; initFrames(); }
-  else { for(const k of Array.from(decoded.keys()))release(k); initVideo(); if(videoReady){lastSeek=-1;requestSeek(progress()*video.duration);stage.classList.add('live')} }
+  if(m==='frames'){ lastKey=''; whenAwake(initFrames); }
+  else { for(const k of Array.from(decoded.keys()))release(k); whenAwake(initVideo); if(videoReady){lastSeek=-1;requestSeek(progress()*video.duration);stage.classList.add('live')} }
   target=shown=progress(); needsDraw=true; render(shown); wake();
 }
 FRAMES_MQ.forEach(m=>m.addEventListener('change',applyMode));
@@ -396,8 +375,6 @@ function goTo(hash){ if(hash==='#top'||hash==='#bezorging'){ document.documentEl
 document.querySelectorAll('a[href^="#"]:not([data-ph])').forEach(a=>a.addEventListener('click',e=>{ const hash=a.getAttribute('href'); if(hash.length<2||hash[0]!=='#')return; e.preventDefault();   /* v48: contact buttons (data-ph) get their real href later and must never be swallowed */ const wasOpen=document.body.classList.contains('menu-open'); if(wasOpen)setMenu(false); setTimeout(()=>goTo(hash),wasOpen?260:0); }));
 document.addEventListener('touchmove',e=>{ if(document.body.classList.contains('intro-lock'))e.preventDefault(); else if(document.body.classList.contains('menu-open')&&!e.target.closest('.menu-panel'))e.preventDefault(); },{passive:false});
 let hdrSolid=false; const hdrState=()=>{ const s=scrollY>heroTop+range-4; if(s!==hdrSolid){hdrSolid=s;document.body.classList.toggle('scrolled-page',s);document.documentElement.classList.toggle('snap',s&&!pageAnim&&finePointer.matches)} }; addEventListener('scroll',hdrState,{passive:true}); hdrState();
-/* the first caption rises only after the intro, so the title lands on a settled stage */
-const band1=bands[0]; if(band1&&!reduce.matches){ band1Floor=0; band1.el.style.setProperty('--k',0); band1.k=0; const rise=()=>{ const t0=performance.now(); const step=now=>{ const t=clamp((now-t0)/900,0,1); band1Floor=Math.round(100*t)/100; if(band1.o>0){ band1.k=band1Floor; band1.el.style.setProperty('--k',band1.k); } if(t<1)requestAnimationFrame(step); else band1Floor=1; }; requestAnimationFrame(step); }; if(document.body.classList.contains('intro-done'))rise(); else new MutationObserver((m,o)=>{ if(document.body.classList.contains('intro-done')){o.disconnect();setTimeout(rise,350)} }).observe(document.body,{attributes:true,attributeFilter:['class']}); }
 document.querySelectorAll('#holoParts .nm[data-name]').forEach(n=>{n.textContent=n.dataset.name});
 },0);
 setTimeout(function(){
