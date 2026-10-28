@@ -171,6 +171,25 @@ footer.foot .credit{flex:1 1 100%;opacity:.7}
   .fab-item{background:rgba(7,11,18,.92)}
 }
 
+/* ---------- v65: mobile usability (hit areas >= 44 px without moving anything, labels >= 12 px) ---------- */
+@media (max-width:900px){
+  .chips a,.cta-mini a,.tiles a,.dirp summary,.contact-list a,.crumbs a,.foot-links a,.foot-brand a.mark,p.lead:has(a+a) a{position:relative}
+  .chips a::after{content:"";position:absolute;inset:-8px -4px}
+  .cta-mini a::after{content:"";position:absolute;inset:-9px -4px}
+  .tiles a{min-height:44px}
+  .dirp summary::after{content:"";position:absolute;inset:-8px 0}
+  .contact-list a::after{content:"";position:absolute;inset:-12px -6px}
+  .crumbs a::after{content:"";position:absolute;inset:-15px -8px}
+  .foot-links a::after{content:"";position:absolute;inset:-14px -10px}
+  .foot-brand a.mark::after{content:"";position:absolute;inset:-11px 0}
+  p.lead:has(a+a) a::after{content:"";position:absolute;inset:-12px -4px}
+  p.lead:has(a+a){line-height:2.5}
+  .pc-m,.pc-h span,.dirp summary span,.calc-in span,.bcheck-in span,.rv small,td .nu,section.block dt,.co span{font-size:12px!important}
+  }
+@media (max-width:560px){
+  .stat .d,.rv span,.rv span *,.calc-note,.contact-list b{font-size:12px!important}
+}
+
 /* ---------- 3D product viewer (subpages) ---------- */
 .v3d-block .v3d-head{text-align:center;max-width:64ch;margin:0 auto}
 .v3d-block .v3d-head .lead{margin-left:auto;margin-right:auto}
