@@ -154,19 +154,22 @@ function prioritiseFrames(pa,pb){ const a=frameIndex(paceMap(pa)), b=frameIndex(
 let framesInit=false, loadedCount=0, cw=0, ch=0, dpr=1, lastKey='', lastDir=1, inflight=0, lastF=0, winLo=0, winHi=0;
 let MAX_INFLIGHT=3, WIN_AHEAD=10, WIN_BACK=4, gliding=false;   /* 15 decoded frames at most: about 150 MB at 1080x2336, half that for 720 px frames */
 function sizeCanvas(){
-  dpr=Math.min(3,devicePixelRatio||1); const w=stage.clientWidth, h=stage.clientHeight;
+  const w=stage.clientWidth, h=stage.clientHeight; dpr=Math.min(1.5,devicePixelRatio||1,1080/Math.max(1,w));   /* v57: a 1.5x canvas is all a 12 fps frame set needs, and it halves the fill cost on phones */
   if(w===cw&&h===ch)return; cw=w; ch=h; canvas.width=Math.round(w*dpr); canvas.height=Math.round(h*dpr); lastKey=''; try{ctx.imageSmoothingQuality=(dpr>=2&&w*dpr<=1300)?'medium':'high'}catch(e){}
 }
 const dw=d=>d.naturalWidth||d.width, dh=d=>d.naturalHeight||d.height;
 function drawCover(d){ const W=canvas.width,H=canvas.height, s=Math.max(W/dw(d),H/dh(d)), w=dw(d)*s, h=dh(d)*s; ctx.drawImage(d,(W-w)/2,(H-h)/2,w,h); }
 function nearestDecoded(i){ let best=null,bd=1e9; for(const k of decoded.keys()){const d=Math.abs(k-i); if(d<bd){bd=d;best=k}} return best; }
+/* v58: frames are decoded no larger than the canvas needs (cover fit). Chromium resizes while decoding off-thread; WebKit decodes the image on a background thread and we keep a canvas-sized copy instead of the full-size image. */
+function frameDims(i){ return i<SEG1_FRAMES?[1080,2336]:[720,1558]; }
+function targetSize(i){ if(!cw)sizeCanvas(); const [dw,dh]=frameDims(i); const s=Math.max(canvas.width/dw,canvas.height/dh); return s<0.9?[Math.round(dw*s),Math.round(dh*s)]:null; }
 function makeDrawable(i){
-  const blob=blobs[i]; const t0=performance.now();
-  if(USE_BITMAP) return createImageBitmap(blob).then(b=>{stats.decodeMs+=performance.now()-t0;stats.decodes++;return b});
+  const blob=blobs[i]; const t0=performance.now(); const ts=targetSize(i);
+  if(USE_BITMAP) return createImageBitmap(blob).then(b=>{stats.decodeMs+=performance.now()-t0;stats.decodes++;return b});   /* Chromium decodes off-thread at full size; resizing there costs main-thread time */
   const url=URL.createObjectURL(blob); const img=new Image(); img.decoding='async'; img.src=url;
-  return img.decode().then(()=>{URL.revokeObjectURL(url);stats.decodeMs+=performance.now()-t0;stats.decodes++;return img},e=>{URL.revokeObjectURL(url);throw e});
+  return img.decode().then(()=>{ URL.revokeObjectURL(url); stats.decodeMs+=performance.now()-t0; stats.decodes++; if(!ts)return img; const c=document.createElement('canvas'); c.width=ts[0]; c.height=ts[1]; c.getContext('2d').drawImage(img,0,0,ts[0],ts[1]); return c; },e=>{URL.revokeObjectURL(url);throw e});
 }
-function release(i){ const d=decoded.get(i); if(!d)return; decoded.delete(i); if(d.close)d.close(); }
+function release(i){ const d=decoded.get(i); if(!d)return; decoded.delete(i); if(d.close)d.close(); else if(d.getContext){d.width=0;d.height=0;} }
 function ensureWindow(f){
   const c=Math.round(f), dir=f>lastF+1e-6?1:f<lastF-1e-6?-1:lastDir; lastF=f; lastDir=dir;
   winLo=clamp(c-(dir>0?WIN_BACK:WIN_AHEAD),0,FRAME_COUNT-1); winHi=clamp(c+(dir>0?WIN_AHEAD:WIN_BACK),0,FRAME_COUNT-1);

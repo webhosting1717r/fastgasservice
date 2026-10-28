@@ -160,6 +160,17 @@ footer.foot .credit{flex:1 1 100%;opacity:.7}
 @media (pointer:coarse){.chapnav a,.regio a{min-height:44px}.fcol li a{min-height:44px}a.ghost{min-height:44px}}
 @media (prefers-reduced-motion:reduce){.btn:active,.hbtn:active{transform:none}}
 
+/* ---------- v57: touch screens get solid surfaces instead of backdrop blur, and no sheen animation ---------- */
+@media (pointer:coarse){
+  body.scrolled-page .top{background:rgba(7,11,18,.93);backdrop-filter:none;-webkit-backdrop-filter:none}
+  .hero1 .livecard,.sub-hero .livecard,.hero1 .band-cta a[data-ph="tel"],.sub-hero .hero-cta .btn.alt,.fab-btn,.fab-item,.menu-panel,.hero-panel,.chap,.v3d-views button,.v3d-reset{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+  .hero1 .livecard,.sub-hero .livecard{background:rgba(14,20,32,.84)}
+  .hero1 .livecard::after,.sub-hero .livecard::after{display:none}
+  .hero1 .band-cta a[data-ph="tel"],.sub-hero .hero-cta .btn.alt{background:rgba(255,255,255,.14)}
+  .fab-btn{background:rgba(7,11,18,.9)}
+  .fab-item{background:rgba(7,11,18,.92)}
+}
+
 /* ---------- 3D product viewer (subpages) ---------- */
 .v3d-block .v3d-head{text-align:center;max-width:64ch;margin:0 auto}
 .v3d-block .v3d-head .lead{margin-left:auto;margin-right:auto}
