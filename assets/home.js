@@ -266,13 +266,13 @@ addEventListener('touchcancel',()=>{ touching=false; armSettle(); },{passive:tru
 /* ---------- v38: scene paging: one wheel tick / swipe / key = one scene; the footage plays the transition ---------- */
 let pageAnim=null, cooldownUntil=0, lastWheelT=0, lastWheelD=0, touchY=null, touchDone=false;
 /* cubic-bezier(.3,.1,.7,.98): soft start, floating middle, subtle brake at the end */
-const bezierEase=(()=>{ const x1=.3,y1=.1,x2=.7,y2=.98; const A=(a,b)=>1-3*b+3*a, B=(a,b)=>3*b-6*a, C=a=>3*a; const calc=(t,a,b)=>((A(a,b)*t+B(a,b))*t+C(a))*t; const slope=(t,a,b)=>3*A(a,b)*t*t+2*B(a,b)*t+C(a);
-  return x=>{ if(x<=0)return 0; if(x>=1)return 1; let t=x; for(let i=0;i<8;i++){ const s=slope(t,x1,x2); if(Math.abs(s)<1e-6)break; t-=(calc(t,x1,x2)-x)/s; } return calc(t,y1,y2); }; })();
+const mkBezier=(x1,y1,x2,y2)=>{ const A=(a,b)=>1-3*b+3*a, B=(a,b)=>3*b-6*a, C=a=>3*a; const calc=(t,a,b)=>((A(a,b)*t+B(a,b))*t+C(a))*t; const slope=(t,a,b)=>3*A(a,b)*t*t+2*B(a,b)*t+C(a);
+  return x=>{ if(x<=0)return 0; if(x>=1)return 1; let t=x; for(let i=0;i<8;i++){ const s=slope(t,x1,x2); if(Math.abs(s)<1e-6)break; t-=(calc(t,x1,x2)-x)/s; } return calc(t,y1,y2); }; }; const bezierEase=mkBezier(.3,.1,.7,.98), swipeEase=mkBezier(.16,.84,.24,1);   /* swipeEase: quick start and a soft landing, like a vertical feed */
 function nearestRestIndex(ps){ let b=0,bd=9; for(let i=0;i<restPs.length;i++){ const d=Math.abs(restPs[i]-ps); if(d<bd){bd=d;b=i} } return b; }
-function glide(y1,dur){
+function glide(y1,dur,easeFn){
   cancelSettle(); const y0=scrollY; if(Math.abs(y1-y0)<2)return;
   if(mode==='frames'){ prioritiseFrames(clamp((y0-heroTop)/range,0,1),clamp((y1-heroTop)/range,0,1)); openFull(); }
-  /* v38b */ /* v38c */ /* v42 */ /* v43 */ document.documentElement.classList.remove('snap'); const t0=performance.now(), ease=bezierEase; const st={raf:0}; pageAnim=st; gliding=true; WIN_AHEAD=16; WIN_BACK=2; MAX_INFLIGHT=4;
+  /* v38b */ /* v38c */ /* v42 */ /* v43 */ document.documentElement.classList.remove('snap'); const t0=performance.now(), ease=easeFn||bezierEase; const st={raf:0}; pageAnim=st; gliding=true; WIN_AHEAD=16; WIN_BACK=2; MAX_INFLIGHT=4;
   const step=now=>{ if(pageAnim!==st)return; const t=clamp((now-t0)/dur,0,1); scrollTo(0,Math.round(y0+(y1-y0)*ease(t)));
     if(t<1)st.raf=requestAnimationFrame(step); else { pageAnim=null; gliding=false; WIN_AHEAD=10; WIN_BACK=4; MAX_INFLIGHT=3; cooldownUntil=performance.now()+650; document.documentElement.classList.toggle('snap',document.body.classList.contains('scrolled-page')&&finePointer.matches); } };
   st.raf=requestAnimationFrame(step);
@@ -301,7 +301,7 @@ function pageBlock(dir){
   const foot=document.querySelector('footer');
   const y=target?Math.round(scrollY+target.getBoundingClientRect().top):(dir>0&&foot?Math.min(Math.round(scrollY+foot.getBoundingClientRect().top),document.documentElement.scrollHeight-innerHeight):null);
   if(y===null||Math.abs(y-scrollY)<2)return false;
-  /* v43 */ glide(y,720); return true;
+  /* v43 */ glide(y,640,swipeEase); return true;
 }
 addEventListener('wheel',e=>{ const dir=e.deltaY>0?1:e.deltaY<0?-1:0; if(!dir||e.ctrlKey)return;
   const now=performance.now(), d=Math.abs(e.deltaY); const accel=d>lastWheelD*1.05||now-lastWheelT>220; lastWheelT=now; lastWheelD=d; /* v42b: also tracked while swallowing, so an inertia tail is never mistaken for a new gesture */
@@ -316,7 +316,7 @@ document.addEventListener('touchmove',e=>{ if(pageAnim){ e.preventDefault(); ret
   /* v43: blocks page per swipe on touch devices; the footer scrolls natively */
   if(document.body.classList.contains('scrolled-page')&&!document.body.classList.contains('menu-open')){ const i=currentBlockIndex(); if(i>=0){ e.preventDefault(); if(touchDone||Math.abs(dy)<22)return; touchDone=true; pageBlock(dir); return; }
     /* v43b: not aligned (e.g. inside the footer or after a native scroll): a swipe glides to the nearest block in that direction; nothing below -> native */
-    const t=nearestBlockInDir(dir); if(t){ e.preventDefault(); if(touchDone||Math.abs(dy)<22)return; touchDone=true; glide(Math.round(scrollY+t.getBoundingClientRect().top),720); } } },{passive:false});
+    const t=nearestBlockInDir(dir); if(t){ e.preventDefault(); if(touchDone||Math.abs(dy)<22)return; touchDone=true; glide(Math.round(scrollY+t.getBoundingClientRect().top),640,swipeEase); } } },{passive:false});
 function nearestBlockInDir(dir){ const secs=blockList||(blockList=Array.from(document.querySelectorAll('main > section:not(#hero)'))); let best=null,bd=1e9; for(const s of secs){ const top=s.getBoundingClientRect().top; if(dir>0?top>2:top<-2){ const d=Math.abs(top); if(d<bd){bd=d;best=s} } } return best; }
 addEventListener('touchend',()=>{ touchY=null; },{passive:true});
 addEventListener('keydown',e=>{ if(e.target&&(e.target.matches('input,textarea,select,button,a')||e.target.isContentEditable))return; const k=e.key; const dir=(k==='ArrowDown'||k==='PageDown'||k===' ')?1:(k==='ArrowUp'||k==='PageUp')?-1:0; if(!dir)return;
@@ -335,7 +335,7 @@ const space=document.getElementById('space'), spA=space?space.querySelector('.sp
 const spPortrait=matchMedia('(orientation:portrait)');
 function spSrc(name){ return 'assets/space-'+name+(spPortrait.matches?'-p':'-d')+'.webp'; }
 spPortrait.addEventListener('change',()=>{ for(const k in spCache)delete spCache[k]; spCur=''; const b=document.querySelector('main > section.in[data-bg]'); if(b)spaceTo(b); });
-function preloadSpace(name){ if(!name||spCache[name])return; const i=new Image(); i.src=spSrc(name); spCache[name]=i; }
+function preloadSpace(name){ return; if(!name||spCache[name])return; const i=new Image(); i.src=spSrc(name); spCache[name]=i; }
 function spaceTo(b){ if(!space||!b.dataset.bg)return; const name=b.dataset.bg; const next=spActive===spA?spB:spA;
   if(name!==spCur){ spCur=name; next.style.setProperty('--pos',b.dataset.pos||'50% 50%'); next.src=spSrc(name);
     const show=()=>{ if(spCur!==name)return; next.classList.add('on'); if(spActive&&spActive!==next)spActive.classList.remove('on'); spActive=next; };
@@ -363,7 +363,7 @@ blocks.forEach(b=>blockIO.observe(b));
   blocks.forEach(b=>act.observe(b));
 })();
 /* phones: the directory folds per province */
-if(matchMedia('(max-width:720px)').matches) document.querySelectorAll('.dirp[open]').forEach(d=>d.removeAttribute('open'));
+if(matchMedia('(max-width:720px)').matches) document.querySelectorAll('.dirp[open],.chap[open]').forEach(d=>d.removeAttribute('open'));
 /* ---------- Menu, anchors, header state, touch lock ---------- */
 const menuBtn=document.getElementById('menuBtn');
 function setMenu(open){ const mEl=document.getElementById('menu'); if(open&&!mEl.classList.contains('mounted')){ mEl.classList.add('mounted'); requestAnimationFrame(()=>requestAnimationFrame(()=>setMenu(true))); menuBtn.setAttribute('aria-expanded','true'); return; } document.body.classList.toggle('menu-open',open); menuBtn.setAttribute('aria-expanded',String(open)); menuBtn.setAttribute('aria-label',open?'Menu sluiten':'Menu openen'); document.getElementById('menu').setAttribute('aria-hidden',String(!open)); }
