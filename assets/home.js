@@ -54,7 +54,7 @@ function onScroll(){ if(!stage.classList.contains('scrolled')&&scrollY>heroTop+r
 new IntersectionObserver(e=>{heroOnScreen=e[0].isIntersecting;if(heroOnScreen)wake()},{threshold:0}).observe(hero);
 addEventListener('scroll',onScroll,{passive:true});
 addEventListener('pageshow',e=>{if(e.persisted){measure();target=shown=progress();wake()}});
-const CHNAMES=['Aanrijden','Binnenkant','Onderdelen','Terug in de rij','Uit het magazijn','Naar Nederland','Bezorggebied']; /* v44 */
+const CHNAMES=['Het magazijn','De Fastgas tank','Onderdelen','Klaar voor bezorging','Uit het magazijn','Onderweg','Bezorggebied']; /* v44 */
 const rail=document.getElementById('rail'), teleName=document.getElementById('teleName'), teleScene=document.getElementById('teleScene'), teleTime=document.getElementById('teleTime'), telePct=document.getElementById('telePct');
 let teleAt=0, teleLast='';
 const SCENES=[0,0.13,0.232,0.315,0.44,0.58,0.875];
@@ -293,6 +293,8 @@ function pagingActive(dir){
 const finePointer=matchMedia('(pointer:fine)');
 let blockAnim=0, blockList=null;
 function currentBlockIndex(){ const secs=blockList||(blockList=Array.from(document.querySelectorAll('main > section:not(#hero)'))); let best=-1,bd=1e9; for(let i=0;i<secs.length;i++){ const d=Math.abs(secs[i].getBoundingClientRect().top); if(d<bd){bd=d;best=i} } return bd<innerHeight*0.5?best:-1; }
+/* v55: a block taller than the screen scrolls natively until its edge is on screen; only then does the next swipe, wheel tick or key page to the neighbour */
+function roomInDir(dir){ const secs=blockList||(blockList=Array.from(document.querySelectorAll('main > section:not(#hero)'))); const vh=innerHeight, mid=vh*0.5; for(const s of secs){ const r=s.getBoundingClientRect(); if(r.top<=mid&&r.bottom>=mid){ return dir>0?r.bottom>vh+10:r.top<-10; } } return false; }
 function pageBlock(dir){
   const i=currentBlockIndex(); if(i<0)return false;
   const b=document.body.classList; if(b.contains('menu-open')||reduce.matches)return false;
@@ -307,14 +309,14 @@ addEventListener('wheel',e=>{ const dir=e.deltaY>0?1:e.deltaY<0?-1:0; if(!dir||e
   const now=performance.now(), d=Math.abs(e.deltaY); const accel=d>lastWheelD*1.05||now-lastWheelT>220; lastWheelT=now; lastWheelD=d; /* v42b: also tracked while swallowing, so an inertia tail is never mistaken for a new gesture */
   if(pageAnim||now<cooldownUntil){ e.preventDefault(); return; }               /* a glide or its inertia tail: swallow */
   if(pagingActive(dir)){ e.preventDefault(); if(!accel||d<6)return; pageScene(dir); return; }
-  if(finePointer.matches&&document.body.classList.contains('scrolled-page')){ const i=currentBlockIndex(); if(i>=0){ e.preventDefault(); if(!accel||d<6)return; pageBlock(dir); } }
+  if(finePointer.matches&&document.body.classList.contains('scrolled-page')&&!roomInDir(dir)){ const i=currentBlockIndex(); if(i>=0){ e.preventDefault(); if(!accel||d<6)return; pageBlock(dir); } }
 },{passive:false});
 addEventListener('touchstart',e=>{ if(mode==='frames'&&heroOnScreen)openFull(); if(e.touches.length!==1){touchY=null;return} touchY=e.touches[0].clientY; touchDone=false; },{passive:true});
 document.addEventListener('touchmove',e=>{ if(pageAnim){ e.preventDefault(); return; } if(touchY===null||e.touches.length!==1)return; const dy=touchY-e.touches[0].clientY; const dir=dy>0?1:-1;
   if(Math.abs(dy)<12&&e.target&&e.target.closest&&e.target.closest('a,button'))return;   /* v47: a tap on a link or button (tiny movement) is never swallowed */
   if(pagingActive(dir)){ e.preventDefault(); if(touchDone||Math.abs(dy)<22)return; touchDone=true; pageScene(dir); return; }
   /* v43: blocks page per swipe on touch devices; the footer scrolls natively */
-  if(document.body.classList.contains('scrolled-page')&&!document.body.classList.contains('menu-open')){ const i=currentBlockIndex(); if(i>=0){ e.preventDefault(); if(touchDone||Math.abs(dy)<22)return; touchDone=true; pageBlock(dir); return; }
+  if(document.body.classList.contains('scrolled-page')&&!document.body.classList.contains('menu-open')&&!roomInDir(dir)){ const i=currentBlockIndex(); if(i>=0){ e.preventDefault(); if(touchDone||Math.abs(dy)<22)return; touchDone=true; pageBlock(dir); return; }
     /* v43b: not aligned (e.g. inside the footer or after a native scroll): a swipe glides to the nearest block in that direction; nothing below -> native */
     const t=nearestBlockInDir(dir); if(t){ e.preventDefault(); if(touchDone||Math.abs(dy)<22)return; touchDone=true; glide(Math.round(scrollY+t.getBoundingClientRect().top),640,swipeEase); } } },{passive:false});
 function nearestBlockInDir(dir){ const secs=blockList||(blockList=Array.from(document.querySelectorAll('main > section:not(#hero)'))); let best=null,bd=1e9; for(const s of secs){ const top=s.getBoundingClientRect().top; if(dir>0?top>2:top<-2){ const d=Math.abs(top); if(d<bd){bd=d;best=s} } } return best; }
@@ -322,7 +324,7 @@ addEventListener('touchend',()=>{ touchY=null; },{passive:true});
 addEventListener('keydown',e=>{ if(e.target&&(e.target.matches('input,textarea,select,button,a')||e.target.isContentEditable))return; const k=e.key; const dir=(k==='ArrowDown'||k==='PageDown'||k===' ')?1:(k==='ArrowUp'||k==='PageUp')?-1:0; if(!dir)return;
   if(pageAnim||performance.now()<cooldownUntil){ e.preventDefault(); return; }
   if(pagingActive(dir)){ e.preventDefault(); pageScene(dir); return; }
-  if(document.body.classList.contains('scrolled-page')&&currentBlockIndex()>=0){ e.preventDefault(); pageBlock(dir); } });
+  if(document.body.classList.contains('scrolled-page')&&currentBlockIndex()>=0&&!roomInDir(dir)){ e.preventDefault(); pageBlock(dir); } });
 /* v42 */
 window.__pageScene=pageScene;
 
@@ -345,6 +347,16 @@ function spaceTo(b){ if(!space||!b.dataset.bg)return; const name=b.dataset.bg; c
 setTimeout(()=>{ const first=document.querySelector('main > section[data-bg]'); if(first){ preloadSpace(first.dataset.bg); const s=first.nextElementSibling; if(s&&s.dataset.bg)preloadSpace(s.dataset.bg); } },4500);
 /* v37: one coordinated reveal per block (kicker, title, lead, then the items in order), replayed when a block comes back */
 const blocks=Array.from(document.querySelectorAll('main > section:not(#hero)'));
+/* v55: fit every block on the visible screen. Level 1 and 2 compact the layout, level 3 scales it (never below 76%); whatever still does not fit scrolls natively (roomInDir) */
+const svhProbe=document.getElementById('svhProbe'); const screenH=()=>Math.max(300,(svhProbe&&svhProbe.clientHeight)||innerHeight);
+function naturalH(b){ const mh=b.style.minHeight, cv=b.style.contentVisibility; b.style.minHeight='0'; b.style.contentVisibility='visible'; const h=b.getBoundingClientRect().height; b.style.minHeight=mh; b.style.contentVisibility=cv; return h; }
+function fitBlock(b){ b.removeAttribute('data-fit'); b.style.removeProperty('--zoom'); const vh=screenH(); let h=naturalH(b); if(h<=vh+2)return;
+  for(let lvl=1;lvl<=2;lvl++){ b.setAttribute('data-fit',lvl); h=naturalH(b); if(h<=vh+2)return; }
+  b.setAttribute('data-fit','3'); b.style.setProperty('--zoom',Math.max(.76,(vh-2)/h).toFixed(3)); }
+function fitAll(){ let i=0; const step=()=>{ const t0=performance.now(); while(i<blocks.length&&performance.now()-t0<8)fitBlock(blocks[i++]); if(i<blocks.length)(window.requestIdleCallback||setTimeout)(step); }; step(); }
+(window.requestIdleCallback?requestIdleCallback(fitAll,{timeout:2500}):setTimeout(fitAll,1500));
+if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>setTimeout(fitAll,400));
+let fitT=0; addEventListener('resize',()=>{ clearTimeout(fitT); fitT=setTimeout(fitAll,250); },{passive:true});
 blocks.forEach(b=>b.querySelectorAll('.rv').forEach((el,i)=>el.style.setProperty('--i',i)));
 const setNum=el=>{ el.querySelectorAll('[data-count]').forEach(reduce.matches?(x=>x.textContent=String(+x.dataset.count)):countUp); };
 const blockIO=new IntersectionObserver(es=>{ for(const e of es){ const b=e.target;
@@ -363,7 +375,10 @@ blocks.forEach(b=>blockIO.observe(b));
   blocks.forEach(b=>act.observe(b));
 })();
 /* phones: the directory folds per province */
-if(matchMedia('(max-width:720px)').matches) document.querySelectorAll('.dirp[open],.chap[open]').forEach(d=>d.removeAttribute('open'));
+if(matchMedia('(max-width:720px)').matches) document.querySelectorAll('.dirp[open]').forEach(d=>d.removeAttribute('open'));
+/* chapter index: folded on phones and tablets, one chapter open at a time, the opened list is brought into view */
+if(matchMedia('(max-width:900px)').matches) document.querySelectorAll('.chap[open]').forEach(d=>d.removeAttribute('open'));
+document.querySelectorAll('.chap').forEach(d=>d.addEventListener('toggle',()=>{ if(!d.open||!matchMedia('(max-width:900px)').matches)return; document.querySelectorAll('.chap[open]').forEach(o=>{ if(o!==d)o.removeAttribute('open'); }); setTimeout(()=>d.scrollIntoView({block:'nearest',behavior:reduce.matches?'auto':'smooth'}),80); }));
 /* ---------- Menu, anchors, header state, touch lock ---------- */
 const menuBtn=document.getElementById('menuBtn');
 function setMenu(open){ const mEl=document.getElementById('menu'); if(open&&!mEl.classList.contains('mounted')){ mEl.classList.add('mounted'); requestAnimationFrame(()=>requestAnimationFrame(()=>setMenu(true))); menuBtn.setAttribute('aria-expanded','true'); return; } document.body.classList.toggle('menu-open',open); menuBtn.setAttribute('aria-expanded',String(open)); menuBtn.setAttribute('aria-label',open?'Menu sluiten':'Menu openen'); document.getElementById('menu').setAttribute('aria-hidden',String(!open)); }
