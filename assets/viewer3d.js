@@ -13,6 +13,7 @@
   var script = document.currentScript, BASE = script ? script.src.replace(/viewer3d\.js.*$/, '') : '/assets/';
   var VENDOR = BASE + 'vendor/three/';
   var MODEL_URL = null;
+  var STRAP_DEG = 91.0;   /* strap position measured on the product photo (degrees to the right of the label's front centre) */
   var NAVY = '#1b2740', BLACK = '#0d1015', YELLOW = '#ead61f';
   var VIEWS = {
     voor: { label: 'Voorkant', az: 0.16, po: 1.36, d: 6.9, ty: 1.8 },
@@ -104,13 +105,14 @@
     var sleeve = new T.Mesh(new T.CylinderGeometry(R + 0.007, R + 0.007, 2.48, SEG, 1, true, -Math.PI, Math.PI * 2), sleeveMat); sleeve.position.y = 1.66; g.add(sleeve);
     var loader = new T.TextureLoader(); var prep = function (t) { t.colorSpace = T.SRGBColorSpace; t.anisotropy = Math.min(16, renderer.capabilities.getMaxAnisotropy()); return t; };
     var hiTex = Math.min(window.devicePixelRatio || 1, 2) > 1 && !matchMedia('(pointer:coarse)').matches && renderer.capabilities.maxTextureSize >= 4096;
-    loader.load(BASE + (hiTex ? 'tank-label@2x.webp?v=2' : 'tank-label.webp?v=2'), function (t) { labelTex = prep(t); sleeveMat.map = labelTex; sleeveMat.color.set('#ffffff'); sleeveMat.needsUpdate = true; needs = true; start(); }, undefined, function () { labelTex = paintLabel(); sleeveMat.map = labelTex; sleeveMat.transparent = true; sleeveMat.depthWrite = false; sleeveMat.needsUpdate = true; needs = true; start(); });
-    loader.load(BASE + 'tank-band.webp?v=2', function (t) { prep(t); t.wrapS = T.RepeatWrapping; bandMat.map = t; bandMat.color.set('#ffffff'); bandMat.needsUpdate = true; needs = true; start(); }, undefined, function () { bandMat.map = paintBand(); bandMat.color.set('#ffffff'); bandMat.needsUpdate = true; needs = true; start(); });
+    loader.load(BASE + (hiTex ? 'tank-label@2x.webp?v=3' : 'tank-label.webp?v=3'), function (t) { labelTex = prep(t); sleeveMat.map = labelTex; sleeveMat.color.set('#ffffff'); sleeveMat.needsUpdate = true; needs = true; start(); }, undefined, function () { labelTex = paintLabel(); sleeveMat.map = labelTex; sleeveMat.transparent = true; sleeveMat.depthWrite = false; sleeveMat.needsUpdate = true; needs = true; start(); });
+    loader.load(BASE + 'tank-band.webp?v=3', function (t) { prep(t); t.wrapS = T.RepeatWrapping; bandMat.map = t; bandMat.color.set('#ffffff'); bandMat.needsUpdate = true; needs = true; start(); }, undefined, function () { bandMat.map = paintBand(); bandMat.color.set('#ffffff'); bandMat.needsUpdate = true; needs = true; start(); });
     /* carrying strap: a flat band close to the body on the right, clipped to the cap and the foot */
     var path = new T.CatmullRomCurve3([new T.Vector3(0.555, 3.28, 0), new T.Vector3(0.6, 3.1, 0), new T.Vector3(0.65, 2.55, 0), new T.Vector3(0.67, 1.8, 0), new T.Vector3(0.65, 1.05, 0), new T.Vector3(0.6, 0.55, 0), new T.Vector3(0.555, 0.36, 0)]);
     var shape = new T.Shape(); shape.moveTo(-0.06, -0.02); shape.lineTo(0.06, -0.02); shape.lineTo(0.06, 0.02); shape.lineTo(-0.06, 0.02); shape.closePath();
-    var strap = new T.Mesh(new T.ExtrudeGeometry(shape, { steps: 60, bevelEnabled: false, extrudePath: path }), black); strap.castShadow = true; g.add(strap);
-    [[0.555, 3.22], [0.555, 0.42]].forEach(function (c) { var clip = new T.Mesh(new T.BoxGeometry(0.1, 0.2, 0.19), black); clip.position.set(c[0], c[1], 0); clip.castShadow = true; g.add(clip); var slot = new T.Mesh(new T.BoxGeometry(0.02, 0.05, 0.11), new T.MeshStandardMaterial({ color: '#2a2e36', metalness: 0.2, roughness: 0.6 })); slot.position.set(c[0] + 0.05, c[1] + 0.02, 0); g.add(slot); });
+    var sg = new T.Group(); sg.rotation.y = (STRAP_DEG - 90) * Math.PI / 180; g.add(sg);   /* v62: strap at its measured angle around the tank */
+    var strap = new T.Mesh(new T.ExtrudeGeometry(shape, { steps: 60, bevelEnabled: false, extrudePath: path }), black); strap.castShadow = true; sg.add(strap);
+    [[0.555, 3.22], [0.555, 0.42]].forEach(function (c) { var clip = new T.Mesh(new T.BoxGeometry(0.1, 0.2, 0.19), black); clip.position.set(c[0], c[1], 0); clip.castShadow = true; sg.add(clip); var slot = new T.Mesh(new T.BoxGeometry(0.02, 0.05, 0.11), new T.MeshStandardMaterial({ color: '#2a2e36', metalness: 0.2, roughness: 0.6 })); slot.position.set(c[0] + 0.05, c[1] + 0.02, 0); sg.add(slot); });
     return g;
   }
   function loadOwnModel() {
