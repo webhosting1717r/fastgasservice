@@ -69,32 +69,11 @@ body.intro-done .top{opacity:1;pointer-events:auto;transition:opacity .2s ease,b
 .btn:hover{background:var(--accent-hover);transform:translateY(-1px)}
 @media (max-width:720px){.top nav a:not(.btn){display:none}.top nav .btn{min-height:40px;padding:0 16px;font-size:14px}}
 
-/* ---------- Load intro: the wordmark tracks in over black, a hairline draws, then it travels into the header title while the footage fades up ---------- */
-.intro{position:fixed;inset:0;z-index:10;display:flex;align-items:center;justify-content:center;visibility:visible;transition:visibility 0s 1.4s}
-.intro.out{visibility:hidden}
-.intro .intro-bg{position:absolute;inset:0;background:var(--canvas);transition:opacity 1s cubic-bezier(.4,0,.2,1)}
-.intro.out .intro-bg{opacity:0}
-.intro .content{position:relative;display:flex;flex-direction:column;align-items:center;gap:clamp(12px,2vh,20px)}
-.intro-mark{position:relative;display:flex;flex-wrap:nowrap;white-space:nowrap;justify-content:center;gap:0 .18em;padding:0 16px;font:800 clamp(34px,8.4vw,132px)/1 var(--display);letter-spacing:-.02em;color:#fff;text-transform:uppercase;will-change:transform,opacity}
-.intro-mark .w{display:block;padding:.06em 0}
-.intro-mark .w span{display:block;opacity:0;letter-spacing:.34em;filter:blur(6px);animation:track 1.35s cubic-bezier(.22,1,.36,1) .12s forwards paused}
-.intro-mark .w:nth-child(2) span{animation-delay:.3s;color:var(--accent)}
+/* ---------- Load intro: the wordmark tracks in over black, a hairline draws{position:fixed;inset:0;z-index:10;display:flex;align-items:center;justify-content:center;visibility:visible;transition:visibility 0s 1.4s}
 @keyframes track{to{opacity:1;letter-spacing:-.02em;filter:blur(0)}}
-.intro-line{width:min(38vw,260px);height:1px;background:rgba(217,241,255,.16);transform:scaleX(0);animation:draw .8s cubic-bezier(.22,1,.36,1) 1.05s forwards paused;transition:opacity .3s}
-.intro.out .intro-line{opacity:0}
-.loader{display:flex;align-items:center;justify-content:center;opacity:0;animation:fadeup .6s ease .55s forwards paused;--p:0.08;margin-top:6px}
-.loader svg{width:clamp(220px,30vw,300px);height:auto;overflow:visible}
-.loader .balloon{transform:scale(var(--p));transition:transform .35s cubic-bezier(.22,1,.36,1)}
-.loader .hose{stroke-dasharray:100;stroke-dashoffset:calc(100 - 100*var(--p));transition:stroke-dashoffset .35s ease}
-.loader .cyl{animation:cylpulse 1.2s ease-in-out infinite}
 @keyframes cylpulse{50%{transform:translateX(1.5px)}}
-.intro-line{position:relative;overflow:hidden}
-.intro-line i{position:absolute;left:0;top:0;bottom:0;width:100%;background:var(--accent);transform:scaleX(var(--p,0));transform-origin:left;transition:transform .35s ease;box-shadow:0 0 10px rgba(242,210,27,.8)}
-.intro.out .loader{opacity:0 !important;transition:opacity .3s}
-body.fonts .intro *{animation-play-state:running}
 @keyframes draw{to{transform:scaleX(1)}}
 @keyframes fadeup{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
-body.intro-lock,html.intro-lock{overflow:hidden}
 .stage.settle{animation:settle 2.2s cubic-bezier(.22,1,.36,1) both}
 @keyframes settle{from{transform:scale(1.06)}to{transform:none}}
 
@@ -194,7 +173,7 @@ footer .legal{grid-column:1/-1;border-top:1px solid rgba(255,255,255,.08);paddin
 .rv.in{opacity:1;transform:none}
 .rv:nth-child(2){transition-delay:.1s}.rv:nth-child(3){transition-delay:.2s}
 @media (max-width:820px){.grid3,.cols,.offerte .wrap,footer{grid-template-columns:1fr}.grid3{gap:16px}.offerte .wrap{gap:36px}}
-@media (prefers-reduced-motion:reduce){.ring,.cue,.progress{display:none}.cue::before{animation:none}body{opacity:1;transition:none}.intro{display:none}.stage.settle{animation:none}.rv,.stripe{opacity:1;transform:none;transition:none}.stat::after{transform:none;transition:none}.band .l1,.band .l2,.band .l3{opacity:1;transform:none}html{scroll-behavior:auto}}
+@media (prefers-reduced-motion:reduce){.ring,.cue,.progress{display:none}.cue::before{animation:none}body{opacity:1;transition:none}.stage.settle{animation:none}.rv,.stripe{opacity:1;transform:none;transition:none}.stat::after{transform:none;transition:none}.band .l1,.band .l2,.band .l3{opacity:1;transform:none}html{scroll-behavior:auto}}
 
 /* ---------- Holographic layers: hotspots mapped onto the footage (cover fit), revealed on --k, hover or tap to open ---------- */
 .holo{position:absolute;inset:0;z-index:3;opacity:0;visibility:hidden;--k:0;pointer-events:none}
@@ -492,7 +471,7 @@ form.q.sent{background-image:none}
   .readout{font-size:11px;white-space:normal;max-width:calc(100vw - 60px)}
   .hud .tele{left:calc(clamp(12px,2.6vw,30px) + 24px);top:calc(var(--hdr,72px) + 9px)}
   .hud .c.tl{display:none}
-  .gauge{width:clamp(64px,9vh,84px)}.intro-mark{font-size:clamp(40px,11.5vw,150px)}.intro-tag{font-size:11px;letter-spacing:.22em;padding:0 32px}.intro .meta{font-size:10px;letter-spacing:.18em;gap:16px}
+  .gauge{width:clamp(64px,9vh,84px)}
   .menu-inner{grid-template-columns:1fr;gap:18px 20px;padding:22px 18px 28px}.menu-links{display:flex;flex-wrap:wrap;gap:6px 14px}.menu-col:nth-child(3){display:grid;grid-template-columns:1fr auto;align-items:start;column-gap:16px}.menu-col:nth-child(3) .menu-h{grid-column:1/-1}.menu-col:nth-child(3) .btn{margin-top:0;position:static}.menu-col:first-child{grid-column:1/-1}.menu-links{gap:4px}.menu-links a{font-size:13px}.menu-list a span{font-size:24px}.menu-list a{padding:7px 0}
   .menu-col:nth-child(3) .btn{position:sticky;bottom:0}
   .dir{padding:26px 16px 6px}.dir-note{font-size:10px;letter-spacing:.1em}.dir li a{padding:10px 4px}.dir ul{grid-template-columns:1fr 1fr;column-gap:16px}
@@ -629,23 +608,10 @@ footer li a:hover::after{transform:none}
 @media (max-width:1000px){.tiles,.reasons{grid-template-columns:1fr 1fr}}
 @media (max-width:560px){.tiles,.reasons{grid-template-columns:1fr}}
 
-/* ---------- Main-page intro: streak, beams, HUD lines ---------- */
-.intro .intro-bg{overflow:hidden}
-.intro .beam{position:absolute;top:-30%;height:160%;width:18vw;background:linear-gradient(90deg,transparent,rgba(58,166,255,.10),transparent);transform:rotate(18deg);filter:blur(10px);opacity:0;animation:beamin 1.2s ease .2s forwards paused,beamdrift 7s ease-in-out infinite alternate paused}
-.intro .beam.b1{left:18%}.intro .beam.b2{left:62%;width:26vw;background:linear-gradient(90deg,transparent,rgba(242,210,27,.07),transparent);animation-delay:.4s,.4s}
+/* ---------- Main-page intro: streak, beams{overflow:hidden}
 @keyframes beamin{to{opacity:1}}
 @keyframes beamdrift{from{transform:rotate(18deg) translateX(-4vw)}to{transform:rotate(18deg) translateX(4vw)}}
-.intro .grid{position:absolute;inset:0;background:repeating-linear-gradient(0deg,rgba(255,255,255,.028) 0 1px,transparent 1px 56px),repeating-linear-gradient(90deg,rgba(255,255,255,.028) 0 1px,transparent 1px 56px);mask-image:radial-gradient(ellipse at 50% 50%,#000 20%,transparent 75%);-webkit-mask-image:radial-gradient(ellipse at 50% 50%,#000 20%,transparent 75%);opacity:0;animation:beamin 1s ease .1s forwards paused}
-.intro .streak{position:absolute;left:-30vw;top:50%;width:30vw;height:2px;margin-top:-1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.9),var(--accent));box-shadow:0 0 18px 3px rgba(242,210,27,.55);opacity:0;animation:streak .75s cubic-bezier(.2,.7,.2,1) .05s forwards paused;z-index:1}
 @keyframes streak{0%{left:-30vw;opacity:0}10%{opacity:1}100%{left:110vw;opacity:0}}
-.intro .content{gap:clamp(12px,2.2vh,22px)}
-.hud-line{font:500 11px/1.5 var(--mono);letter-spacing:.24em;text-transform:uppercase;color:var(--holo);min-height:1.5em;white-space:nowrap;opacity:0;animation:fadeup .4s ease .25s forwards paused;text-align:center;max-width:92vw;overflow:hidden;text-overflow:ellipsis}
-.hud-line::after{content:"";display:inline-block;width:.55em;height:1em;background:var(--accent);vertical-align:-.12em;margin-left:3px;animation:cblink .7s steps(1) infinite}
-.hud-line.done::after{display:none}
-.hud-line.big{font-size:clamp(12px,1.3vw,15px);letter-spacing:.3em;color:#fff;animation-delay:1.25s}
-.hud-line.big b{color:var(--accent)}
-.intro.out .hud-line,.intro.out .beam,.intro.out .grid{opacity:0 !important;transition:opacity .3s}
-@media (max-width:720px){.hud-line{font-size:9.5px;letter-spacing:.16em;white-space:normal;max-width:86vw}.hud-line.big{font-size:11px;letter-spacing:.2em}.intro .beam{width:40vw}}
 
 /* ---------- Contact: WhatsApp and phone ---------- */
 .btn svg,.ghost svg{width:18px;height:18px;margin-right:8px;flex:none}
@@ -685,36 +651,17 @@ footer li a:hover::after{transform:none}
 .stat:hover::after,.col:hover::after,.cc:hover::after,.tiles a:hover::after,.reasons li:hover::after{opacity:1}
 @media (prefers-reduced-motion:reduce){.ticker .tk{animation:none}.rv .lead{filter:none;opacity:1}.t .w span{transform:none;opacity:1}}
 
-/* ---------- Intro v26: bloom, ring, exact wordmark handover, line-art loader ---------- */
-.intro .intro-bg{background:radial-gradient(ellipse at 50% 52%,#0c1424 0%,var(--canvas) 62%)}
-.intro .beam{display:none}
-.intro .glow{position:absolute;left:50%;top:50%;width:min(72vw,900px);aspect-ratio:1;transform:translate(-50%,-50%);border-radius:50%;background:radial-gradient(circle,rgba(58,166,255,.18),rgba(58,166,255,.06) 38%,transparent 66%);filter:blur(18px);opacity:0;animation:beamin 1.4s ease .1s forwards paused,glowb 5s ease-in-out 1.6s infinite alternate paused}
+/* ---------- Intro v26: bloom, ring, exact wordmark handover{background:radial-gradient(ellipse at 50% 52%,#0c1424 0%,var(--canvas) 62%)}
 @keyframes glowb{to{transform:translate(-50%,-50%) scale(1.1)}}
-.intro .ring{position:absolute;left:50%;top:50%;width:min(58vw,720px);aspect-ratio:1;transform:translate(-50%,-50%) scale(.55);border-radius:50%;border:1px solid rgba(217,241,255,.12);opacity:0;animation:ringin 2.4s cubic-bezier(.22,1,.36,1) .25s forwards paused}
 @keyframes ringin{to{opacity:1;transform:translate(-50%,-50%) scale(1)}}
-.intro .ring::before{content:"";position:absolute;inset:-1px;border-radius:50%;border:1px solid transparent;border-top-color:rgba(242,210,27,.75);animation:spin 7s linear infinite}
-.intro .ring::after{content:"";position:absolute;inset:14%;border-radius:50%;border:1px dashed rgba(217,241,255,.14);animation:spin 26s linear infinite reverse}
 @keyframes spin{to{transform:rotate(360deg)}}
-.intro.out .glow,.intro.out .ring{opacity:0 !important;transition:opacity .35s}
-.intro-mark{display:block;padding:0;gap:0;font:800 clamp(34px,8.4vw,132px)/1 var(--display);letter-spacing:-.02em;text-transform:uppercase;color:#fff;white-space:nowrap}
-.intro-mark .im{display:inline-block;position:relative;white-space:nowrap}
-.intro-mark .w1,.intro-mark .w2{display:inline-block;opacity:0;letter-spacing:.26em;filter:blur(2px);animation:track2 1.25s cubic-bezier(.22,1,.36,1) .15s forwards paused;will-change:letter-spacing,opacity}
-.intro-mark .w2{color:var(--accent);font-weight:800;animation-delay:.32s}
 @keyframes track2{to{opacity:1;letter-spacing:-.02em;filter:blur(0)}}
-.intro-mark .im::after{content:"";position:absolute;inset:-12% -6%;background:linear-gradient(105deg,transparent 42%,rgba(255,255,255,.42) 50%,transparent 58%);mix-blend-mode:screen;transform:translateX(-130%);animation:shine 1s cubic-bezier(.4,0,.2,1) 1.7s forwards paused;pointer-events:none}
 @keyframes shine{to{transform:translateX(130%)}}
-.intro.out .intro-mark .im::after{display:none}
-.loader svg{width:clamp(200px,26vw,280px)}
-.loader .balloon{transform:scale(var(--p));transition:transform .35s cubic-bezier(.22,1,.36,1)}
-.loader .bfill{fill:#f2d21b;fill-opacity:calc(var(--p)*.32);transition:fill-opacity .35s}
-.loader .orbit{stroke-dasharray:4 7;animation:spin 9s linear infinite;transform-origin:216px 42px}
-.loader .cyl{animation:cylpulse 1.4s ease-in-out infinite}
 .top{opacity:1}
 .top .mark{opacity:0}
 body.intro-done .top .mark{opacity:1;transition:none}
 .burger{opacity:0;transform:translateY(-8px);transition:opacity .6s ease .3s,transform .6s cubic-bezier(.22,1,.36,1) .3s}
 body.intro-done .burger{opacity:1;transform:none}
-@media (max-width:720px){.intro .glow{width:120vw}.intro .ring{width:88vw}}
 
 /* ---------- Holo map v27: outline glow, radar pulse, border trace ---------- */
 @property --ang{syntax:'<angle>';inherits:false;initial-value:0deg}
@@ -738,61 +685,15 @@ body.intro-done .burger{opacity:1;transform:none}
 .provbox i{border-color:rgba(159,233,255,.9)}
 @media (prefers-reduced-motion:reduce){.provfill.hot::before,.provfill.hot + .provline::after{animation:none}}
 
-/* ---------- Intro fixes: explicit ring/glow sizes, background fades after the wordmark has travelled ---------- */
-.intro .glow{--rs:min(72vw,900px);width:var(--rs);height:var(--rs);aspect-ratio:auto}
-.intro .ring{--rs:min(58vw,720px);width:var(--rs);height:var(--rs);aspect-ratio:auto}
-@media (max-width:720px){.intro .glow{--rs:120vw}.intro .ring{--rs:88vw}}
-.intro .intro-bg{transition:opacity .85s cubic-bezier(.4,0,.2,1) .4s}
-.intro.out .intro-bg{opacity:0}
+/* ---------- Intro fixes: explicit ring/glow sizes{--rs:min(72vw,900px);width:var(--rs);height:var(--rs);aspect-ratio:auto}
 @media ((max-width:720px) and (orientation:portrait)),((orientation:portrait) and (pointer:coarse)){.provfill,.provline{--ccx:var(--cx-p);--ccy:var(--cy-p)}}
-
-/* ---------- Intro v28: teleport dive from orbit into the warehouse ---------- */
-.intro.gta{background:#000}
-.intro.gta .sky,.intro.gta .ground{position:absolute;inset:0;overflow:hidden;will-change:transform,opacity,filter}
-.intro.gta .img{position:absolute;inset:-8%;background:url(assets/journey-ending.jpg) center/cover no-repeat;will-change:transform}
-.intro.gta .ground .img{background-image:url(assets/intro-poster.webp)}
-.intro.gta .sky{opacity:0;transform:scale(1.08);animation:skyin .7s ease .2s forwards paused,dive 1.35s cubic-bezier(.75,0,1,.55) 1.15s forwards paused}
 @keyframes skyin{to{opacity:1;transform:scale(1.12)}}
 @keyframes dive{0%{opacity:1;transform:scale(1.12);filter:brightness(1) saturate(.85)}55%{opacity:1;filter:brightness(1.35) saturate(.7)}100%{opacity:0;transform:scale(9);filter:brightness(3.2) saturate(.4)}}
-.intro.gta .sky .z1,.intro.gta .sky .z2,.intro.gta .sky .z3{opacity:0;animation:smear 1.35s ease-in 1.15s forwards paused}
-.intro.gta .sky .z1{transform:scale(1.035)}.intro.gta .sky .z2{transform:scale(1.075)}.intro.gta .sky .z3{transform:scale(1.12)}
 @keyframes smear{0%{opacity:0}30%{opacity:.28}100%{opacity:.28}}
-.intro.gta .ground{opacity:0;transform:scale(3.2);filter:blur(14px) brightness(2.4);animation:land 1.25s cubic-bezier(.08,.82,.17,1) 2.3s forwards paused,shake .5s cubic-bezier(.36,.07,.19,.97) 3.5s 1 paused}
 @keyframes land{0%{opacity:0;transform:scale(3.2);filter:blur(14px) brightness(2.4)}18%{opacity:1}100%{opacity:1;transform:scale(1);filter:blur(0) brightness(1)}}
 @keyframes shake{0%{transform:scale(1)}15%{transform:translate(-4px,3px) scale(1.004)}35%{transform:translate(4px,-2px) scale(1.003)}55%{transform:translate(-2px,2px) scale(1.002)}75%{transform:translate(2px,-1px) scale(1.001)}100%{transform:scale(1)}}
-.intro.gta .ground .z1,.intro.gta .ground .z2,.intro.gta .ground .z3{opacity:0;animation:smear2 1.25s ease-out 2.3s forwards paused}
-.intro.gta .ground .z1{transform:scale(1.02)}.intro.gta .ground .z2{transform:scale(1.045)}.intro.gta .ground .z3{transform:scale(1.075)}
 @keyframes smear2{0%{opacity:.26}55%{opacity:.14}100%{opacity:0}}
-.intro.gta .flash{position:absolute;inset:0;background:radial-gradient(circle at 50% 50%,#fff,#dff4ff 35%,#7fc8ff 100%);opacity:0;animation:flash .62s ease-out 2.22s forwards paused;pointer-events:none}
 @keyframes flash{0%{opacity:0}22%{opacity:1}100%{opacity:0}}
-.intro.gta .vig{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 50%,transparent 40%,rgba(0,0,0,.72) 100%);opacity:0;animation:beamin .6s ease 2.6s forwards paused;pointer-events:none}
-.intro.gta .scrim{position:absolute;inset:0;background:linear-gradient(180deg,rgba(2,6,12,.55),rgba(2,6,12,.35) 40%,rgba(2,6,12,.6));opacity:0;animation:beamin .5s ease 3.55s forwards paused;pointer-events:none}
-.intro.gta .scan{position:absolute;inset:0;background:repeating-linear-gradient(0deg,rgba(255,255,255,.05) 0 1px,transparent 1px 4px);mix-blend-mode:overlay;opacity:0;animation:beamin .3s ease 2.4s forwards paused;pointer-events:none}
-.intro.gta .corner{position:absolute;width:26px;height:26px;border:1px solid rgba(217,241,255,.55);opacity:0;animation:beamin .4s ease 3.7s forwards paused}
-.intro.gta .corner.tl{left:22px;top:calc(env(safe-area-inset-top) + 22px);border-right:0;border-bottom:0}
-.intro.gta .corner.tr{right:22px;top:calc(env(safe-area-inset-top) + 22px);border-left:0;border-bottom:0}
-.intro.gta .corner.bl{left:22px;bottom:calc(env(safe-area-inset-bottom) + 22px);border-right:0;border-top:0}
-.intro.gta .corner.br{right:22px;bottom:calc(env(safe-area-inset-bottom) + 22px);border-left:0;border-top:0}
-.intro.gta .content{z-index:2}
-.intro.gta .hud-line{animation-delay:3.75s}
-.intro.gta .hud-line.big{animation-delay:4.35s}
-.intro.gta .intro-mark .w1,.intro.gta .intro-mark .w2{animation-delay:3.6s;animation-duration:1.1s}
-.intro.gta .intro-mark .w2{animation-delay:3.75s}
-.intro.gta .intro-mark .im::after{animation-delay:4.85s}
-.intro.gta .intro-mark{text-shadow:0 8px 40px rgba(0,0,0,.6)}
-.intro.gta .intro-line{animation-delay:4.4s}
-.intro.gta.out .ground,.intro.gta.out .scrim,.intro.gta.out .vig,.intro.gta.out .scan,.intro.gta.out .corner{opacity:0 !important;transition:opacity .7s ease .45s}
-.intro.gta.out .hud-line,.intro.gta.out .intro-line{opacity:0 !important;transition:opacity .25s}
-@media ((max-width:720px) and (orientation:portrait)),((orientation:portrait) and (pointer:coarse)){
-  .intro.gta .img{background-image:url(assets/frames-webp/p_431.webp)}
-  .intro.gta .ground .img{background-image:url(assets/intro-poster-portrait.webp)}
-  .intro.gta .sky .z3,.intro.gta .ground .z3{display:none}
-  .intro.gta .ground{filter:blur(8px) brightness(2)}
-}
-@media (prefers-reduced-motion:reduce){.intro.gta .sky,.intro.gta .ground .z1,.intro.gta .ground .z2,.intro.gta .ground .z3,.intro.gta .flash{display:none}.intro.gta .ground{opacity:1;transform:none;filter:none;animation:none}}
-body.fonts .intro.gta *{animation-play-state:running}
-.intro.gta{transition:background-color .6s ease .5s}
-.intro.gta.out{background-color:transparent}
 @media ((max-width:720px) and (orientation:portrait)),((orientation:portrait) and (pointer:coarse)){.provline.nh{--emask:url(assets/edge-nh-p.png)}.provline.fl{--emask:url(assets/edge-fl-p.png)}.provline.ut{--emask:url(assets/edge-ut-p.png)}}
 .provfill{opacity:calc(var(--s)*.055)}
 .provfill::after{background:repeating-linear-gradient(0deg,rgba(255,255,255,.13) 0 1px,transparent 1px 12px),repeating-linear-gradient(90deg,rgba(255,255,255,.13) 0 1px,transparent 1px 12px),linear-gradient(to bottom,transparent 0%,rgba(255,255,255,.55) 50%,transparent 100%);background-size:100% 100%,100% 100%,100% 30%;background-repeat:repeat,repeat,no-repeat;background-position:0 0,0 0,0 -40%}
@@ -843,17 +744,6 @@ body:not(.sub):not(.scrolled-page) .fab:not(.open):hover .fab-btn{opacity:1}
   .rv .lead{filter:blur(6px)}
   .stat::after,.col::after,.cc::after,.tiles a::after,.reasons li::after{display:none}
 }
-@media (max-width:720px){
-  .intro.gta .ground .z2{display:none}
-  .intro.gta .sky .z2{display:none}
-}
-
-/* ---------- v30: hand-off and text reveal polish ---------- */
-.intro.gta{transition:visibility 0s 1.4s}
-.intro.gta.out{background-color:transparent}
-.intro.gta.out .ground{opacity:0 !important;transition:opacity .35s ease}
-.intro.gta.out .scrim,.intro.gta.out .vig,.intro.gta.out .scan,.intro.gta.out .corner{opacity:0 !important;transition:opacity .3s ease}
-.intro.gta.out .sky{display:none}
 .rv .lead{filter:none;opacity:0;transform:translateY(14px);transition:opacity .8s ease .1s,transform .9s cubic-bezier(.22,1,.36,1) .1s}
 .rv.in .lead{opacity:1;transform:none}
 .t .w{padding-bottom:.14em;margin-bottom:-.14em}
@@ -861,23 +751,11 @@ body:not(.sub):not(.scrolled-page) .fab:not(.open):hover .fab-btn{opacity:1}
 
 /* ---------- v31: phone intro dive without filter animations ---------- */
 @keyframes divep{0%{opacity:1;transform:scale(1.12)}60%{opacity:1}100%{opacity:0;transform:scale(7)}}
-@keyframes landp{0%{opacity:0;transform:scale(2.6)}20%{opacity:1}100%{opacity:1;transform:scale(1)}}
-.intro.gta .ground{animation-delay:2.3s,3.58s}
-@media ((max-width:720px) and (orientation:portrait)),((orientation:portrait) and (pointer:coarse)),(pointer:coarse){
-  .intro.gta .sky{animation-name:skyin,divep;filter:none;will-change:transform,opacity}
-  .intro.gta .ground{animation-name:landp,shake;filter:none;will-change:transform,opacity}
-  .intro.gta .sky .z1,.intro.gta .sky .z2,.intro.gta .sky .z3,.intro.gta .ground .z1,.intro.gta .ground .z2,.intro.gta .ground .z3{display:none}
-  .intro.gta .flash{animation-duration:.75s;background:radial-gradient(circle at 50% 50%,#fff,#e8f6ff 40%,#9fd6ff 100%)}
-  .intro.gta .scan{display:none}
-  .intro-mark .w1,.intro-mark .w2{letter-spacing:.12em;filter:none}
-}
 
 /* ---------- v32: wordmark blends into the header title ---------- */
 .top .mark{opacity:0;transition:opacity .46s ease}
 body.mark-landing .top .mark,body.intro-done .top .mark{opacity:1}
 body.intro-done .top .mark{transition:none}
-.intro.gta.out .intro-mark{text-shadow:none}
-.intro.gta .intro-mark{transition:text-shadow .25s ease}
 
 /* ---------- v34: smoothness ---------- */
 main > .block,main > .offerte,footer{content-visibility:auto;contain-intrinsic-size:auto 900px}
@@ -906,20 +784,11 @@ main > .block,main > .offerte,footer{content-visibility:auto;contain-intrinsic-s
 @media (max-width:720px){.bcheck{grid-template-columns:1fr}}
 
 /* v37 */
-/* --- intro: no orbit dive, straight onto the warehouse frame --- */
-.intro.gta .sky,.intro.gta .flash,.intro.gta .ground .z1,.intro.gta .ground .z2,.intro.gta .ground .z3{display:none !important}
-.intro.gta .ground{opacity:0;transform:none;filter:none;animation:groundin .9s ease .05s forwards paused}
+/* --- intro: no orbit dive{display:none !important}
 @keyframes groundin{to{opacity:1}}
-.intro.gta .vig{animation-delay:.25s}.intro.gta .scan{animation-delay:.15s}.intro.gta .scrim{animation-delay:.4s}.intro.gta .corner{animation-delay:.6s}
-.intro.gta .intro-mark .w1,.intro.gta .intro-mark .w2{animation-delay:.55s}.intro.gta .intro-mark .w2{animation-delay:.72s}
-.intro.gta .intro-mark .im::after{animation-delay:1.9s}
-.intro.gta .hud-line{animation-delay:.8s}.intro.gta .hud-line.big{animation-delay:1.4s}
-.intro.gta .intro-line{animation-delay:1.45s}
-@media (prefers-reduced-motion:reduce){.intro.gta .ground{opacity:1;animation:none}}
 
 /* --- full-screen blocks, snapping from block to block once the journey is done --- */
-html.snap{scroll-snap-type:y mandatory}
-html.snap.intro-lock,body.menu-open{scroll-snap-type:none}
+html.snap{scroll-snap-type:y mandatory}body.menu-open{scroll-snap-type:none}
 .hero{scroll-snap-align:end}
 main > section{scroll-snap-align:start;scroll-snap-stop:always;position:relative}
 footer{scroll-snap-align:end}
@@ -1424,6 +1293,75 @@ main > section[data-fit="3"] > :not(.sbg){zoom:var(--zoom,1)}
 @media (max-width:900px) and (max-height:780px){#diensten .rv > .lead{display:none}}
 @media (max-height:820px){#diensten .more{display:none}#diensten .chaps{margin-top:16px}#diensten .chap{padding:14px 18px 10px}#diensten .chap li a{min-height:34px}#diensten .chap summary span{font-size:13px}}
 @media (max-height:560px){#diensten .rv > .lead,#diensten .chap summary span{display:none}}
+/* Fastgas Service NL: Apple layer v1. Shared by the homepage and every subpage. Calm type, soft cards, pill buttons, a compact footer, and far fewer heavy effects on touch screens. */
+html{-webkit-tap-highlight-color:transparent;-webkit-text-size-adjust:100%}
+a,button,summary,.btn,.hbtn,.fab-btn,.burger{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+body{font-synthesis:none;text-rendering:optimizeLegibility;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+.btn:not(.hbtn):active,.hbtn:active,.regio a:active,.chapnav a:active{transform:scale(.97)}
+
+/* ---------- footer (all sizes) ---------- */
+footer.foot{display:block;max-width:none;margin:0;padding:clamp(40px,6vw,72px) clamp(20px,5vw,64px) calc(26px + env(safe-area-inset-bottom));background:rgba(5,8,15,.94);border-top:1px solid rgba(255,255,255,.08);color:var(--text-2);font-size:14px}
+footer.foot .foot-grid{display:block;max-width:1240px;margin:0 auto}
+footer.foot .foot-brand{display:grid;gap:14px;max-width:60ch;margin:0 0 clamp(24px,4vw,40px);grid-column:auto}
+footer.foot .foot-brand .mark{display:inline-block;margin:0;font-size:26px;color:#fff}
+footer.foot .foot-brand p{margin:0;font-size:14px;line-height:1.55;color:var(--text-2);max-width:none}
+.foot-cta{display:flex;flex-wrap:wrap;gap:10px}
+.foot-cta .btn{min-height:46px;padding:0 20px;border-radius:999px;font-size:15px;white-space:nowrap}
+.foot-cta .btn svg{width:18px;height:18px;margin-right:8px}
+.foot-cta .btn[data-ph="whatsapp"]{background:#25d366;color:#06210f!important;box-shadow:0 8px 24px rgba(37,211,102,.25)}
+.foot-cta .btn.alt{background:rgba(255,255,255,.12);color:#fff!important;border:1px solid rgba(255,255,255,.22);box-shadow:none}
+.foot-cols{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px 28px}
+.fcol summary{list-style:none;padding:0 0 12px;font:600 12px/1.2 var(--body);letter-spacing:.14em;text-transform:uppercase;color:#e6edf6;pointer-events:none;cursor:default}
+.fcol summary::-webkit-details-marker{display:none}
+.fcol ul{list-style:none;display:grid;gap:0;margin:0;padding:0}
+.fcol li{padding:0}
+.fcol li a{display:block;padding:5px 0;color:var(--text-2);font-size:13.5px;line-height:1.35;text-decoration:none;transition:color .25s}
+.fcol li a:hover{color:#fff}
+.fcol li a::after{display:none}
+footer.foot .legal{display:flex;flex-wrap:wrap;align-items:baseline;gap:10px 28px;margin-top:clamp(24px,4vw,40px);padding-top:20px;border-top:1px solid rgba(255,255,255,.1);font-size:12.5px;line-height:1.5;color:var(--text-2);grid-column:auto}
+.foot-links{display:flex;gap:18px}.foot-links a{color:#cfd8e4;text-decoration:none}.foot-links a:hover{color:#fff}
+.foot-note{flex:1 1 320px;max-width:72ch}
+footer.foot .credit{flex:1 1 100%;opacity:.7}
+@media (max-width:1100px){.foot-cols{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media (max-width:820px){
+  .foot-cols{display:block;border-top:1px solid rgba(255,255,255,.1)}
+  .fcol{border-bottom:1px solid rgba(255,255,255,.1)}
+  .fcol summary{display:flex;align-items:center;justify-content:space-between;min-height:52px;padding:0 2px;font-size:16px;font-weight:600;letter-spacing:-.01em;text-transform:none;color:#fff;pointer-events:auto;cursor:pointer}
+  .fcol summary::after{content:"";width:9px;height:9px;margin-right:4px;border-right:1.5px solid var(--accent);border-bottom:1.5px solid var(--accent);transform:rotate(45deg);transition:transform .3s cubic-bezier(.22,1,.36,1)}
+  .fcol[open] summary::after{transform:translateY(3px) rotate(225deg)}
+  .fcol ul{padding:0 2px 12px}
+  .fcol li a{padding:11px 0;font-size:15px}
+  footer.foot .legal{flex-direction:column;gap:12px}
+}
+
+/* ---------- touch screens: calm, soft and light ---------- */
+@media (max-width:820px),(pointer:coarse){
+  .scanlines,.glow,.stripe,.ticker{display:none!important}
+  .hud{display:none!important}
+  .bhead{display:none!important}
+  .kicker,.band .kicker,.hero-panel .kicker,.hero1 .eyebrow{font:600 13px/1.25 var(--body);letter-spacing:.01em;text-transform:none}
+  .kicker::before,.band .kicker::before{content:none}
+  h2.t,main h2.t,.cta-mid h2.t{font-family:var(--body);font-weight:600;text-transform:none;letter-spacing:-.03em;line-height:1.06;font-size:clamp(28px,8.2vw,40px)}
+  .band h2{font-family:var(--body);font-weight:600;text-transform:none;letter-spacing:-.03em;line-height:1.05;font-size:clamp(30px,9vw,46px)}
+  .band p,.lead{font-size:clamp(16px,4.3vw,18px);line-height:1.5}
+  .facts li{font:600 12px/1 var(--body);letter-spacing:.01em;text-transform:none;border-radius:999px;padding:8px 12px}
+  .stat,.col,.mod,.pc,.steps li,.chap,.reasons li{border-radius:20px;border:1px solid rgba(255,255,255,.1)!important;background:rgba(14,20,32,.7)!important;background-image:none!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;box-shadow:none}
+  .stat .u,.stat .n,.mod b,.chap b,.col h3{font-family:var(--body);font-weight:600;text-transform:none;letter-spacing:-.02em}
+  body.sub main > .block > .rv,body.sub .faq.rv{border-radius:20px;border:1px solid rgba(255,255,255,.09);background:rgba(14,20,32,.66);-webkit-backdrop-filter:none;backdrop-filter:none}
+  .faq summary{font:600 17px/1.3 var(--body);text-transform:none;letter-spacing:-.01em}
+  .btn:not(.hbtn){border-radius:999px;min-height:50px;font:600 16px/1 var(--body);letter-spacing:0;text-transform:none}
+  .hero-cta{gap:10px}
+  .cta-mini{font:600 12px/1.2 var(--body);letter-spacing:0;text-transform:none}
+  .cta-mini span::before{content:none}
+  .menu .mh b{font:600 19px/1.1 var(--body);text-transform:none;letter-spacing:-.02em}
+  .menu .mh small{display:none}
+  .menu .mh span{font:400 13px/1.3 var(--body);letter-spacing:0;text-transform:none}
+  .rv .lead{filter:none!important}
+  .sub-hero::before{background:linear-gradient(to bottom,rgba(7,11,18,.8) 0,rgba(7,11,18,.72) 45%,rgba(7,11,18,.95) 100%)}
+}
+@media (pointer:coarse){input,textarea,select{font-size:max(16px,1em)!important}}
+@media (prefers-reduced-motion:reduce){.btn:active,.hbtn:active{transform:none}}
+
 </style>
 </head>
 <body class="intro-done">
@@ -1909,15 +1847,20 @@ main > section[data-fit="3"] > :not(.sbg){zoom:var(--zoom,1)}
     </div>
   </section>
 
-  <footer>
-    <div class="foot-brand"><a class="mark" href="#top">Fastgas <b>Service NL</b></a><p>De Fastgas 2 kg tank (2000 gram lachgas, getest op 165 bar, lekvrij ventiel, 99,9 procent zuivere N2O) bezorgd in Noord-Holland, Flevoland en Utrecht: 24 uur per dag, 7 dagen per week, binnen 20 minuten op locatie.</p></div>
-    <div><h3>Lachgas bestellen</h3><ul><li><a href="lachgas-bestellen/">Lachgas bestellen</a></li><li><a href="lachgas-kopen/">Lachgas kopen</a></li><li><a href="lachgas-bestellen-24-7/">Lachgas bestellen 24/7</a></li><li><a href="lachgas-bestellen-whatsapp/">Lachgas bestellen via WhatsApp</a></li><li><a href="lachgas-bezorgdienst/">Lachgas bezorgdienst</a></li><li><a href="lachgas-bezorgen/">Lachgas bezorgen</a></li></ul></div>
-    <div><h3>Lachgas Amsterdam</h3><ul><li><a href="lachgas-amsterdam/">Lachgas Amsterdam</a></li><li><a href="lachgas-amsterdam-bestellen/">Lachgas bestellen Amsterdam</a></li><li><a href="lachgas-amsterdam-24-7/">Lachgas Amsterdam 24/7</a></li><li><a href="fastgas-amsterdam/">Fastgas Amsterdam</a></li><li><a href="lachgas-amsterdam-omstreken/">Lachgas Amsterdam omstreken</a></li><li><a href="lachgas-bezorgen-amsterdam/">Lachgas bezorgen Amsterdam</a></li></ul></div>
-    <div><h3>Fastgas 2kg tank</h3><ul><li><a href="fastgas-tank-2kg/">Fastgas 2kg tank</a></li><li><a href="fastgas-bestellen/">Fastgas bestellen</a></li><li><a href="lachgas-tank-2kg/">Lachgas tank 2 kg</a></li><li><a href="fastgas-2kg-vullingen/">Fastgas 2kg vullingen</a></li><li><a href="fastgas-tank-aansluiten/">Fastgas tank aansluiten</a></li><li><a href="lachgas-cilinder-2000-gram/">Lachgas cilinder 2000 gram</a></li></ul></div>
-    <div><h3>Lachgas bezorgen in</h3><ul><li><a href="lachgas-bezorgen-amsterdam/">Lachgas Amsterdam</a></li><li><a href="lachgas-bezorgen-haarlem/">Lachgas Haarlem</a></li><li><a href="lachgas-bezorgen-zaandam/">Lachgas Zaandam</a></li><li><a href="lachgas-bezorgen-hilversum/">Lachgas Hilversum</a></li><li><a href="lachgas-bezorgen-almere/">Lachgas Almere</a></li><li><a href="lachgas-bezorgen-lelystad/">Lachgas Lelystad</a></li><li><a href="lachgas-bezorgen-utrecht/">Lachgas Utrecht</a></li><li><a href="lachgas-bezorgen-amersfoort/">Lachgas Amersfoort</a></li><li><a href="lachgas-bezorgen-hoofddorp/">Lachgas Hoofddorp</a></li><li><a href="lachgas-bezorgen-alkmaar/">Lachgas Alkmaar</a></li><li><a href="lachgas-bezorgen-purmerend/">Lachgas Purmerend</a></li><li><a href="lachgas-bezorgen-amstelveen/">Lachgas Amstelveen</a></li><li><a href="bezorggebieden/">Alle bezorgplaatsen</a></li></ul></div>
-    <div><h3>Informatie</h3><ul><li><a href="werkwijze/">Werkwijze</a></li><li><a href="voordelen/">Voordelen</a></li><li><a href="veelgestelde-vragen/">Veelgestelde vragen</a></li><li><a href="lachgas-horeca/">Lachgas voor horeca</a></li><li><a href="wegwerp-lachgas-tank/">Wegwerp lachgas tank</a></li><li><a href="slagroomspuiten-en-toebehoren/">Slagroomspuiten en toebehoren</a></li><li><a href="veilig-gebruik-lachgas/">Veilig gebruik</a></li><li><a href="lachgas-wetgeving/">Lachgas wetgeving</a></li><li><a href="over-ons/">Over ons</a></li><li><a href="contact/">Contact</a></li><li><a href="voorwaarden/">Voorwaarden</a></li><li><a href="privacy/">Privacy</a></li></ul></div>
-    <div class="legal"><span>© 2026 Fastgas Service NL</span><span>Levering aan horeca, catering en professionele keukens, 18+. Sinds 1 januari 2023 staat lachgas op lijst II van de Opiumwet; bezit, vervoer en verkoop voor recreatief gebruik zijn verboden.</span><span class="credit">Ruimtebeelden: ESA/Hubble · ESA/Webb (NASA, ESA, CSA) · NASA, CC BY 4.0</span></div>
-  </footer>
+  <footer class="foot">
+  <div class="foot-grid">
+    <div class="foot-brand"><a class="mark" href="#top">Fastgas <b>Service NL</b></a><p>De Fastgas 2 kg tank (2000 gram lachgas) bezorgd in Noord-Holland, Flevoland en Utrecht: 24 uur per dag, 7 dagen per week, binnen 20 minuten op locatie.</p>
+      <div class="foot-cta"><a class="btn" href="https://wa.me/16474935191?text=Zijn%20jullie%20actief%3F" data-ph="whatsapp" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.885-9.885 9.885m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>Bestel via WhatsApp</a><a class="btn alt" href="tel:+31684695184" data-ph="tel"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25c1.1.37 2.3.57 3.6.57a1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.57a1 1 0 0 1-.25 1L6.6 10.8z"/></svg>Bel nu</a></div></div>
+    <nav class="foot-cols" aria-label="Voettekst">
+      <details class="fcol" open><summary>Lachgas bestellen</summary><ul><li><a href="lachgas-bestellen/">Lachgas bestellen</a></li><li><a href="lachgas-kopen/">Lachgas kopen</a></li><li><a href="lachgas-bestellen-24-7/">Lachgas bestellen 24/7</a></li><li><a href="lachgas-bestellen-whatsapp/">Lachgas bestellen via WhatsApp</a></li><li><a href="lachgas-bezorgdienst/">Lachgas bezorgdienst</a></li><li><a href="lachgas-bezorgen/">Lachgas bezorgen</a></li></ul></details>
+      <details class="fcol" open><summary>Lachgas Amsterdam</summary><ul><li><a href="lachgas-amsterdam/">Lachgas Amsterdam</a></li><li><a href="lachgas-amsterdam-bestellen/">Lachgas bestellen Amsterdam</a></li><li><a href="lachgas-amsterdam-24-7/">Lachgas Amsterdam 24/7</a></li><li><a href="fastgas-amsterdam/">Fastgas Amsterdam</a></li><li><a href="lachgas-amsterdam-omstreken/">Lachgas Amsterdam omstreken</a></li><li><a href="lachgas-bezorgen-amsterdam/">Lachgas bezorgen Amsterdam</a></li></ul></details>
+      <details class="fcol" open><summary>Fastgas 2kg tank</summary><ul><li><a href="fastgas-tank-2kg/">Fastgas 2kg tank</a></li><li><a href="fastgas-bestellen/">Fastgas bestellen</a></li><li><a href="lachgas-tank-2kg/">Lachgas tank 2 kg</a></li><li><a href="fastgas-2kg-vullingen/">Fastgas 2kg vullingen</a></li><li><a href="fastgas-tank-aansluiten/">Fastgas tank aansluiten</a></li><li><a href="lachgas-cilinder-2000-gram/">Lachgas cilinder 2000 gram</a></li></ul></details>
+      <details class="fcol" open><summary>Lachgas bezorgen in</summary><ul><li><a href="lachgas-bezorgen-amsterdam/">Lachgas Amsterdam</a></li><li><a href="lachgas-bezorgen-haarlem/">Lachgas Haarlem</a></li><li><a href="lachgas-bezorgen-zaandam/">Lachgas Zaandam</a></li><li><a href="lachgas-bezorgen-hilversum/">Lachgas Hilversum</a></li><li><a href="lachgas-bezorgen-almere/">Lachgas Almere</a></li><li><a href="lachgas-bezorgen-lelystad/">Lachgas Lelystad</a></li><li><a href="lachgas-bezorgen-utrecht/">Lachgas Utrecht</a></li><li><a href="lachgas-bezorgen-amersfoort/">Lachgas Amersfoort</a></li><li><a href="lachgas-bezorgen-hoofddorp/">Lachgas Hoofddorp</a></li><li><a href="lachgas-bezorgen-alkmaar/">Lachgas Alkmaar</a></li><li><a href="lachgas-bezorgen-purmerend/">Lachgas Purmerend</a></li><li><a href="lachgas-bezorgen-amstelveen/">Lachgas Amstelveen</a></li><li><a href="bezorggebieden/">Alle bezorgplaatsen</a></li></ul></details>
+      <details class="fcol" open><summary>Informatie</summary><ul><li><a href="werkwijze/">Werkwijze</a></li><li><a href="voordelen/">Voordelen</a></li><li><a href="veelgestelde-vragen/">Veelgestelde vragen</a></li><li><a href="lachgas-horeca/">Lachgas voor horeca</a></li><li><a href="wegwerp-lachgas-tank/">Wegwerp lachgas tank</a></li><li><a href="slagroomspuiten-en-toebehoren/">Slagroomspuiten en toebehoren</a></li><li><a href="veilig-gebruik-lachgas/">Veilig gebruik</a></li><li><a href="lachgas-wetgeving/">Lachgas wetgeving</a></li><li><a href="over-ons/">Over ons</a></li></ul></details>
+    </nav>
+    <div class="legal"><span>© 2026 Fastgas Service NL</span><span class="foot-links"><a href="voorwaarden/">Voorwaarden</a><a href="privacy/">Privacy</a><a href="contact/">Contact</a></span><span class="foot-note">Levering aan horeca, catering en professionele keukens, 18+. Sinds 1 januari 2023 staat lachgas op lijst II van de Opiumwet; bezit, vervoer en verkoop voor recreatief gebruik zijn verboden.</span><span class="credit">Ruimtebeelden: ESA/Hubble · ESA/Webb (NASA, ESA, CSA) · NASA, CC BY 4.0</span></div>
+  </div>
+</footer>
 </main>
 
 
@@ -1930,8 +1873,8 @@ main > section[data-fit="3"] > :not(.sbg){zoom:var(--zoom,1)}
   <button class="fab-btn" id="fabBtn" type="button" aria-expanded="false" aria-controls="fabMenu" aria-label="Contact: WhatsApp of bellen"><span class="i1"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" d="M4 5.5h16v10H9l-4 3.5v-3.5H4z"/><path fill="currentColor" d="M8 9.5h8v1.6H8zM8 12.2h5v1.6H8z"/></svg></span><span class="i2" aria-hidden="true"></span><span class="lb" aria-hidden="true">Contact</span><i class="pulse"></i></button>
 </div>
 <script type="application/json" id="cityData">[{"n":"Amsterdam","s":"lachgas-bezorgen-amsterdam","p":"Noord-Holland","w":[]},{"n":"Haarlem","s":"lachgas-bezorgen-haarlem","p":"Noord-Holland","w":[]},{"n":"Zaandam","s":"lachgas-bezorgen-zaandam","p":"Noord-Holland","w":[]},{"n":"Alkmaar","s":"lachgas-bezorgen-alkmaar","p":"Noord-Holland","w":[]},{"n":"Hoorn","s":"lachgas-bezorgen-hoorn","p":"Noord-Holland","w":[]},{"n":"Den Helder","s":"lachgas-bezorgen-den-helder","p":"Noord-Holland","w":[]},{"n":"Hilversum","s":"lachgas-bezorgen-hilversum","p":"Noord-Holland","w":[]},{"n":"Almere","s":"lachgas-bezorgen-almere","p":"Flevoland","w":[]},{"n":"Lelystad","s":"lachgas-bezorgen-lelystad","p":"Flevoland","w":[]},{"n":"Utrecht","s":"lachgas-bezorgen-utrecht","p":"Utrecht","w":[]},{"n":"Amersfoort","s":"lachgas-bezorgen-amersfoort","p":"Utrecht","w":[]},{"n":"Amsterdam Centrum","s":"lachgas-bezorgen-amsterdam-centrum","p":"Noord-Holland","w":["Jordaan","Grachtengordel","Negen Straatjes","Nieuwmarkt","De Wallen","Oostelijke Eilanden","Plantage","Haarlemmerbuurt"]},{"n":"Amsterdam Noord","s":"lachgas-bezorgen-amsterdam-noord","p":"Noord-Holland","w":["NDSM-werf","Buiksloterham","Van der Pekbuurt","Vogelbuurt","Tuindorp Oostzaan","Nieuwendam","Molenwijk","Overhoeks"]},{"n":"Amsterdam Nieuw-West","s":"lachgas-bezorgen-amsterdam-nieuw-west","p":"Noord-Holland","w":["Sloterdijk","Osdorp","Geuzenveld","Slotermeer","Slotervaart","Overtoomse Veld","De Aker","Nieuw Sloten"]},{"n":"Amsterdam Oost","s":"lachgas-bezorgen-amsterdam-oost","p":"Noord-Holland","w":["Indische Buurt","Watergraafsmeer","Oud-Oost","Dapperbuurt","Oosterparkbuurt","Science Park","IJburg","Zeeburgereiland"]},{"n":"Amsterdam West","s":"lachgas-bezorgen-amsterdam-west","p":"Noord-Holland","w":["Oud-West","De Baarsjes","Bos en Lommer","Mercatorplein","Kinkerbuurt","Staatsliedenbuurt","Westerpark","Frederik Hendrikbuurt"]},{"n":"Amsterdam Zuid","s":"lachgas-bezorgen-amsterdam-zuid","p":"Noord-Holland","w":["De Pijp","Oud-Zuid","Museumkwartier","Rivierenbuurt","Zuidas","Beethovenstraat","Apollolaan","Buitenveldert"]},{"n":"Amsterdam Zuidoost","s":"lachgas-bezorgen-amsterdam-zuidoost","p":"Noord-Holland","w":["Bijlmer-Centrum","Bijlmer-Oost","Gaasperdam","Holendrecht","Bullewijk","Driemond","Arena-gebied","Amstel III"]},{"n":"Weesp","s":"lachgas-bezorgen-weesp","p":"Noord-Holland","w":["Binnenstad","Aetsveld","Hogewey","Leeuwenveld","Bloemendalerpolder","Weespersluis"]},{"n":"Hoofddorp","s":"lachgas-bezorgen-hoofddorp","p":"Noord-Holland","w":["Centrum","Floriande","Toolenburg","Overbos","Pax","Bornholm","Graan voor Visch","Schiphol-Rijk","Schiphol","Nieuw-Vennep"]},{"n":"Amstelveen","s":"lachgas-bezorgen-amstelveen","p":"Noord-Holland","w":["Stadshart","Oude Dorp","Westwijk","Kostverloren","Bovenkerk","Uilenstede","Elsrijk"]},{"n":"Diemen","s":"lachgas-bezorgen-diemen","p":"Noord-Holland","w":["Diemen-Centrum","Diemen-Noord","Diemen-Zuid","Holland Park","Bergwijkpark"]},{"n":"Purmerend","s":"lachgas-bezorgen-purmerend","p":"Noord-Holland","w":["Centrum","Weidevenne","Purmer-Noord","Purmer-Zuid","Overwhere","Wheermolen","Gors"]},{"n":"Beverwijk","s":"lachgas-bezorgen-beverwijk","p":"Noord-Holland","w":["Centrum","Kuenenplein","Meerestein","Oosterwijk","Westertuinen","Wijk aan Zee"]},{"n":"IJmuiden","s":"lachgas-bezorgen-ijmuiden","p":"Noord-Holland","w":["Oud-IJmuiden","Zeewijk","IJmuiden-Noord","Velsen-Zuid","Driehuis","Santpoort"]},{"n":"Heemskerk","s":"lachgas-bezorgen-heemskerk","p":"Noord-Holland","w":["Centrum","Broekpolder","Heemskerkerduin","Waterakkers","Assumburg"]},{"n":"Castricum","s":"lachgas-bezorgen-castricum","p":"Noord-Holland","w":["Centrum","Bakkum","Castricum aan Zee","Limmen","Akersloot"]},{"n":"Heerhugowaard","s":"lachgas-bezorgen-heerhugowaard","p":"Noord-Holland","w":["Centrum","Stad van de Zon","Butterhuizen","Rivierenwijk","Zuidwijk","Langedijk"]},{"n":"Enkhuizen","s":"lachgas-bezorgen-enkhuizen","p":"Noord-Holland","w":["Binnenstad","Kadijken","Oude Gouw","Gommerwijk","Bovenkarspel"]},{"n":"Volendam","s":"lachgas-bezorgen-volendam","p":"Noord-Holland","w":["Centrum","De Dijk","Blokgouw","Edam","Monnickendam"]},{"n":"Bussum","s":"lachgas-bezorgen-bussum","p":"Noord-Holland","w":["Centrum","Brediuskwartier","Spiegel","Westereng","Naarden-Vesting","Muiden"]},{"n":"Huizen","s":"lachgas-bezorgen-huizen","p":"Noord-Holland","w":["Oude Dorp","Huizermaat","Oostermeent","Stad en Lande","Haven"]},{"n":"Laren","s":"lachgas-bezorgen-laren","p":"Noord-Holland","w":["Centrum","Blaricum","Bijvanck","Eemnes"]},{"n":"Aalsmeer","s":"lachgas-bezorgen-aalsmeer","p":"Noord-Holland","w":["Centrum","Kudelstaart","Hornmeer","Oosteinde","Westeinderplassen"]},{"n":"Uithoorn","s":"lachgas-bezorgen-uithoorn","p":"Noord-Holland","w":["Centrum","Zijdelwaard","Meerwijk","Thamerdal","De Kwakel"]},{"n":"Zandvoort","s":"lachgas-bezorgen-zandvoort","p":"Noord-Holland","w":["Centrum","Boulevard","Bentveld","Nieuw-Noord","Circuit"]},{"n":"Heemstede","s":"lachgas-bezorgen-heemstede","p":"Noord-Holland","w":["Centrum","Merlenhoven","Indische Buurt","Bennebroek"]},{"n":"Dronten","s":"lachgas-bezorgen-dronten","p":"Flevoland","w":["Centrum","De Munten","De Gilden","Biddinghuizen","Swifterbant"]},{"n":"Zeewolde","s":"lachgas-bezorgen-zeewolde","p":"Flevoland","w":["Centrum","Polderwijk","Horsterveld","Harderhaven"]},{"n":"Emmeloord","s":"lachgas-bezorgen-emmeloord","p":"Flevoland","w":["Centrum","Espelervaart","Emmelhage","De Erven","Noordoostpolder"]},{"n":"Urk","s":"lachgas-bezorgen-urk","p":"Flevoland","w":["Oud Urk","De Haven","Zeewijk","Oranjewijk"]},{"n":"Nieuwegein","s":"lachgas-bezorgen-nieuwegein","p":"Utrecht","w":["City","Batau","Fokkesteeg","Doorslag","Zuilenstein","Galecop","Vreeswijk"]},{"n":"Zeist","s":"lachgas-bezorgen-zeist","p":"Utrecht","w":["Centrum","Kerckebosch","Vollenhove","Den Dolder","Austerlitz","Bosch en Duin"]},{"n":"Houten","s":"lachgas-bezorgen-houten","p":"Utrecht","w":["Centrum","Het Rond","Castellum","Schalkwijk","'t Goy"]},{"n":"Veenendaal","s":"lachgas-bezorgen-veenendaal","p":"Utrecht","w":["Centrum","Veenendaal-Oost","Dragonder","Petenbos","Het Ambacht"]},{"n":"Woerden","s":"lachgas-bezorgen-woerden","p":"Utrecht","w":["Binnenstad","Snel en Polanen","Molenvliet","Harmelen","Kamerik"]},{"n":"IJsselstein","s":"lachgas-bezorgen-ijsselstein","p":"Utrecht","w":["Binnenstad","Zenderpark","Achterveld","Groenvliet"]},{"n":"Maarssen","s":"lachgas-bezorgen-maarssen","p":"Utrecht","w":["Maarssen-Dorp","Maarssenbroek","Breukelen","Loenen aan de Vecht","Vreeland"]},{"n":"Bilthoven","s":"lachgas-bezorgen-bilthoven","p":"Utrecht","w":["Centrum","De Bilt","Maartensdijk","Groenekan","Hollandsche Rading"]},{"n":"Soest","s":"lachgas-bezorgen-soest","p":"Utrecht","w":["Soest-Zuid","Soestdijk","Soesterberg","Overhees","Klaarwater"]},{"n":"Baarn","s":"lachgas-bezorgen-baarn","p":"Utrecht","w":["Centrum","Lage Vuursche","Eemnes","Paleis Soestdijk"]},{"n":"Leusden","s":"lachgas-bezorgen-leusden","p":"Utrecht","w":["Centrum","Leusden-Zuid","Achterveld","Tabaksteeg"]},{"n":"Vianen","s":"lachgas-bezorgen-vianen","p":"Utrecht","w":["Binnenstad","Hagestein","Everdingen","Lexmond"]},{"n":"Driebergen","s":"lachgas-bezorgen-driebergen","p":"Utrecht","w":["Driebergen-Rijsenburg","Doorn","Maarn","Leersum"]}]</script>
-<script src="assets/live.js?v=3" defer></script>
-<script src="assets/motion.js?v=47" defer></script>
+<script src="assets/live.js?v=4" defer></script>
+<script src="assets/motion.js?v=48" defer></script>
 <script src="assets/home.js?v=54" defer></script>
 </body>
 </html>

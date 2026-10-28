@@ -25,7 +25,7 @@
     walk(el);
   }
   var heads = document.querySelectorAll('h1.t, h2.t');
-  if (!reduce) Array.prototype.forEach.call(heads, function (h) {
+  if (!reduce && fine) Array.prototype.forEach.call(heads, function (h) {   /* word-by-word reveal only for pointer devices; touch screens keep one simple fade */
     split(h);
     if (!h.closest('.rv')) requestAnimationFrame(function () { requestAnimationFrame(function () { h.classList.add('in'); }); });
   });

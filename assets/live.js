@@ -62,3 +62,11 @@
   if (!document.hidden) start();
   window.__fgLive = { paint: paint };
 })();
+
+/* footer link groups: open on desktop, folded on phones (the links stay in the HTML either way) */
+(function () {
+  var cols = document.querySelectorAll('footer .fcol'); if (!cols.length || !window.matchMedia) return;
+  var mq = matchMedia('(max-width:820px)');
+  function sync() { for (var i = 0; i < cols.length; i++) { if (mq.matches) cols[i].removeAttribute('open'); else cols[i].setAttribute('open', ''); } }
+  sync(); if (mq.addEventListener) mq.addEventListener('change', sync); else if (mq.addListener) mq.addListener(sync);
+})();
