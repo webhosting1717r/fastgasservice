@@ -15,11 +15,11 @@
   var MODEL_URL = null;
   var NAVY = '#1b2740', BLACK = '#0d1015', YELLOW = '#ead61f';
   var VIEWS = {
-    voor: { label: 'Voorkant', az: 0.16, po: 1.36, d: 5.6, ty: 1.48 },
-    zij: { label: 'Zijkant', az: Math.PI / 2, po: 1.36, d: 5.6, ty: 1.48 },
-    achter: { label: 'Achterkant', az: Math.PI + 0.16, po: 1.36, d: 5.6, ty: 1.48 },
-    ventiel: { label: 'Ventiel', az: 0.7, po: 0.75, d: 3.0, ty: 2.7 },
-    etiket: { label: 'Etiket', az: -0.1, po: 1.5, d: 3.3, ty: 1.3 }
+    voor: { label: 'Voorkant', az: 0.16, po: 1.36, d: 6.9, ty: 1.8 },
+    zij: { label: 'Zijkant', az: Math.PI / 2, po: 1.36, d: 6.9, ty: 1.8 },
+    achter: { label: 'Achterkant', az: Math.PI + 0.16, po: 1.36, d: 6.9, ty: 1.8 },
+    ventiel: { label: 'Ventiel', az: 0.7, po: 0.75, d: 3.0, ty: 3.35 },
+    etiket: { label: 'Etiket', az: -0.1, po: 1.5, d: 3.9, ty: 1.6 }
   };
   var DEFAULT_VIEW = 'voor', RESUME_AFTER = 3500, TWEEN_MS = 750;
 
@@ -86,31 +86,35 @@
     var yellow = new T.MeshStandardMaterial({ color: YELLOW, metalness: 0.05, roughness: 0.45 });
     var R = 0.5, SEG = 128;
     var mk = function (geo, mat, y, cast) { var m = new T.Mesh(geo, mat); m.position.y = y; m.castShadow = cast !== false; m.receiveShadow = true; g.add(m); return m; };
-    /* proportions measured on the product photo: width 1.06, foot 0.40, body 1.94, cap 0.42, nozzle 0.20 (total 2.96 = 2.8 x the width) */
+    /* v60: proportions measured on the product photo, body diameter = 1: foot 0.42, body 2.57 (band 0.09 at the top), cap 0.43, nozzle 0.20, total 3.62 */
     var cap = function (r, y0, y1, eb, et) { var p = [new T.Vector2(0, y0)], i, a; if (eb > 0) { for (i = 0; i <= 8; i++) { a = (i / 8) * Math.PI / 2; p.push(new T.Vector2(r - eb + Math.sin(a) * eb, y0 + eb - Math.cos(a) * eb)); } } else p.push(new T.Vector2(r, y0)); if (et > 0) { for (i = 0; i <= 8; i++) { a = (i / 8) * Math.PI / 2; p.push(new T.Vector2(r - et + Math.cos(a) * et, y1 - et + Math.sin(a) * et)); } } else p.push(new T.Vector2(r, y1)); p.push(new T.Vector2(0, y1)); return new T.LatheGeometry(p, SEG); };
-    mk(cap(0.53, 0, 0.4, 0.07, 0.012), black, 0);
-    mk(new T.CylinderGeometry(R, R, 1.94, SEG, 1, true), navy, 1.37);
-    var band = new T.Mesh(new T.CylinderGeometry(R + 0.004, R + 0.004, 0.07, SEG, 1, true), new T.MeshStandardMaterial({ map: paintBand(), metalness: 0.05, roughness: 0.45 })); band.position.y = 2.295; g.add(band);
-    mk(cap(0.53, 2.34, 2.76, 0.012, 0.06), black, 0);
-    var inner = new T.Mesh(new T.TorusGeometry(0.2, 0.012, 10, 64), new T.MeshStandardMaterial({ color: '#1b1e24', metalness: 0.2, roughness: 0.6 })); inner.rotation.x = Math.PI / 2; inner.position.y = 2.76; g.add(inner);
+    mk(cap(0.53, 0, 0.42, 0.07, 0.012), black, 0);
+    mk(new T.CylinderGeometry(R, R, 2.57, SEG, 1, true), navy, 1.705);
+    var bandMat = new T.MeshStandardMaterial({ color: YELLOW, metalness: 0.05, roughness: 0.45 });
+    var band = new T.Mesh(new T.CylinderGeometry(R + 0.004, R + 0.004, 0.09, SEG, 1, true, -Math.PI, Math.PI * 2), bandMat); band.position.y = 2.945; g.add(band);
+    mk(cap(0.53, 2.99, 3.42, 0.012, 0.06), black, 0);
+    var inner = new T.Mesh(new T.TorusGeometry(0.2, 0.012, 10, 64), new T.MeshStandardMaterial({ color: '#1b1e24', metalness: 0.2, roughness: 0.6 })); inner.rotation.x = Math.PI / 2; inner.position.y = 3.42; g.add(inner);
     var brass = new T.MeshStandardMaterial({ color: '#c9a44a', metalness: 0.95, roughness: 0.32, envMapIntensity: 1.3 });
-    mk(new T.CylinderGeometry(0.105, 0.115, 0.05, 48), brass, 2.785);
-    mk(new T.CylinderGeometry(0.07, 0.07, 0.1, 48), brass, 2.86);
-    mk(new T.CylinderGeometry(0.08, 0.076, 0.1, 48), black, 2.955);
-    mk(new T.CylinderGeometry(0.05, 0.05, 0.03, 48), black, 3.02);
-    /* label sleeve */
-    labelTex = paintLabel();
-    var sleeve = new T.Mesh(new T.CylinderGeometry(R + 0.007, R + 0.007, 1.9, SEG, 1, true, -Math.PI, Math.PI * 2), new T.MeshStandardMaterial({ map: labelTex, transparent: true, depthWrite: false, metalness: 0.05, roughness: 0.55 })); sleeve.position.y = 1.37; g.add(sleeve);
+    mk(new T.CylinderGeometry(0.105, 0.115, 0.05, 48), brass, 3.445);
+    mk(new T.CylinderGeometry(0.07, 0.07, 0.1, 48), brass, 3.52);
+    mk(new T.CylinderGeometry(0.08, 0.076, 0.1, 48), black, 3.615);
+    mk(new T.CylinderGeometry(0.05, 0.05, 0.03, 48), black, 3.68);
+    /* label sleeve: the unwrapped product photo; if it cannot load, the painted label takes over */
+    var sleeveMat = new T.MeshStandardMaterial({ color: NAVY, metalness: 0.08, roughness: 0.52 });
+    var sleeve = new T.Mesh(new T.CylinderGeometry(R + 0.007, R + 0.007, 2.48, SEG, 1, true, -Math.PI, Math.PI * 2), sleeveMat); sleeve.position.y = 1.66; g.add(sleeve);
+    var loader = new T.TextureLoader(); var prep = function (t) { t.colorSpace = T.SRGBColorSpace; t.anisotropy = Math.min(16, renderer.capabilities.getMaxAnisotropy()); return t; };
+    loader.load(BASE + 'tank-label.webp?v=1', function (t) { labelTex = prep(t); sleeveMat.map = labelTex; sleeveMat.color.set('#ffffff'); sleeveMat.needsUpdate = true; needs = true; start(); }, undefined, function () { labelTex = paintLabel(); sleeveMat.map = labelTex; sleeveMat.transparent = true; sleeveMat.depthWrite = false; sleeveMat.needsUpdate = true; needs = true; start(); });
+    loader.load(BASE + 'tank-band.webp?v=1', function (t) { prep(t); t.wrapS = T.RepeatWrapping; bandMat.map = t; bandMat.color.set('#ffffff'); bandMat.needsUpdate = true; needs = true; start(); }, undefined, function () { bandMat.map = paintBand(); bandMat.color.set('#ffffff'); bandMat.needsUpdate = true; needs = true; start(); });
     /* carrying strap: a flat band close to the body on the right, clipped to the cap and the foot */
-    var path = new T.CatmullRomCurve3([new T.Vector3(0.555, 2.62, 0), new T.Vector3(0.6, 2.45, 0), new T.Vector3(0.645, 2.0, 0), new T.Vector3(0.66, 1.4, 0), new T.Vector3(0.645, 0.85, 0), new T.Vector3(0.6, 0.5, 0), new T.Vector3(0.555, 0.34, 0)]);
+    var path = new T.CatmullRomCurve3([new T.Vector3(0.555, 3.28, 0), new T.Vector3(0.6, 3.1, 0), new T.Vector3(0.65, 2.55, 0), new T.Vector3(0.67, 1.8, 0), new T.Vector3(0.65, 1.05, 0), new T.Vector3(0.6, 0.55, 0), new T.Vector3(0.555, 0.36, 0)]);
     var shape = new T.Shape(); shape.moveTo(-0.06, -0.02); shape.lineTo(0.06, -0.02); shape.lineTo(0.06, 0.02); shape.lineTo(-0.06, 0.02); shape.closePath();
     var strap = new T.Mesh(new T.ExtrudeGeometry(shape, { steps: 60, bevelEnabled: false, extrudePath: path }), black); strap.castShadow = true; g.add(strap);
-    [[0.555, 2.56], [0.555, 0.4]].forEach(function (c) { var clip = new T.Mesh(new T.BoxGeometry(0.1, 0.2, 0.19), black); clip.position.set(c[0], c[1], 0); clip.castShadow = true; g.add(clip); var slot = new T.Mesh(new T.BoxGeometry(0.02, 0.05, 0.11), new T.MeshStandardMaterial({ color: '#2a2e36', metalness: 0.2, roughness: 0.6 })); slot.position.set(c[0] + 0.05, c[1] + 0.02, 0); g.add(slot); });
+    [[0.555, 3.22], [0.555, 0.42]].forEach(function (c) { var clip = new T.Mesh(new T.BoxGeometry(0.1, 0.2, 0.19), black); clip.position.set(c[0], c[1], 0); clip.castShadow = true; g.add(clip); var slot = new T.Mesh(new T.BoxGeometry(0.02, 0.05, 0.11), new T.MeshStandardMaterial({ color: '#2a2e36', metalness: 0.2, roughness: 0.6 })); slot.position.set(c[0] + 0.05, c[1] + 0.02, 0); g.add(slot); });
     return g;
   }
   function loadOwnModel() {
     return import(VENDOR + 'GLTFLoader.js').then(function (m) { return new Promise(function (res, rej) { new m.GLTFLoader().load(MODEL_URL, res, undefined, rej); }); }).then(function (gltf) {
-      var g = gltf.scene; var box = new T.Box3().setFromObject(g), size = box.getSize(new T.Vector3()), s = 3.0 / Math.max(size.y, 1e-6); g.scale.setScalar(s); box.setFromObject(g); var ctr = box.getCenter(new T.Vector3()); g.position.set(-ctr.x, -box.min.y, -ctr.z);
+      var g = gltf.scene; var box = new T.Box3().setFromObject(g), size = box.getSize(new T.Vector3()), s = 3.6 / Math.max(size.y, 1e-6); g.scale.setScalar(s); box.setFromObject(g); var ctr = box.getCenter(new T.Vector3()); g.position.set(-ctr.x, -box.min.y, -ctr.z);
       g.traverse(function (o) { if (o.isMesh) { o.castShadow = true; o.receiveShadow = true; } }); return g;
     });
   }
@@ -136,7 +140,7 @@
         var glowY = new T.Mesh(new T.CircleGeometry(1.5, 64), new T.MeshBasicMaterial({ color: '#2a2a10', transparent: true, opacity: 0.18 })); glowY.rotation.x = -Math.PI / 2; glowY.position.set(0.8, 0.002, 0.4); scene.add(glowY);
         var glowB = new T.Mesh(new T.CircleGeometry(1.5, 64), new T.MeshBasicMaterial({ color: '#0c1e3a', transparent: true, opacity: 0.22 })); glowB.rotation.x = -Math.PI / 2; glowB.position.set(-0.8, 0.002, -0.3); scene.add(glowB);
         controls = new OrbitControls(camera, renderer.domElement);
-        controls.enableDamping = true; controls.dampingFactor = 0.07; controls.enablePan = false; controls.minDistance = 2.4; controls.maxDistance = 9; controls.minPolarAngle = 0.35; controls.maxPolarAngle = 1.62; controls.rotateSpeed = matchMedia('(pointer:coarse)').matches ? 1.1 : 0.8; controls.zoomSpeed = 0.9; controls.dampingFactor = 0.09; controls.autoRotateSpeed = 0.9; controls.autoRotate = !reduce.matches;
+        controls.enableDamping = true; controls.dampingFactor = 0.07; controls.enablePan = false; controls.minDistance = 2.6; controls.maxDistance = 10; controls.minPolarAngle = 0.35; controls.maxPolarAngle = 1.62; controls.rotateSpeed = matchMedia('(pointer:coarse)').matches ? 1.1 : 0.8; controls.zoomSpeed = 0.9; controls.dampingFactor = 0.09; controls.autoRotateSpeed = 0.9; controls.autoRotate = !reduce.matches;
         renderer.domElement.style.touchAction = 'none';
         controls.addEventListener('start', function () { stage.classList.add('dragging', 'touched'); pauseRotate(); });
         controls.addEventListener('end', function () { stage.classList.remove('dragging'); scheduleResume(); });
@@ -186,7 +190,7 @@
     if (disposed) return; disposed = true; stop(); clearTimeout(resumeT);
     if (controls) controls.dispose();
     if (scene) scene.traverse(function (o) { if (o.geometry) o.geometry.dispose(); var m = o.material; if (m) [].concat(m).forEach(function (x) { if (x.map) x.map.dispose(); x.dispose(); }); });
-    if (labelTex) labelTex.dispose(); if (pmrem) pmrem.dispose(); if (scene && scene.environment) scene.environment.dispose();
+    if (labelTex) labelTex.dispose(); /* v60 */ if (pmrem) pmrem.dispose(); if (scene && scene.environment) scene.environment.dispose();
     if (renderer) { renderer.dispose(); renderer.forceContextLoss(); }
   }
   addEventListener('pagehide', dispose);
