@@ -15,11 +15,11 @@
   var MODEL_URL = null;
   var NAVY = '#1b2740', BLACK = '#0d1015', YELLOW = '#ead61f';
   var VIEWS = {
-    voor: { label: 'Voorkant', az: 0.2, po: 1.3, d: 6.3, ty: 1.6 },
-    zij: { label: 'Zijkant', az: Math.PI / 2, po: 1.3, d: 6.3, ty: 1.6 },
-    achter: { label: 'Achterkant', az: Math.PI + 0.2, po: 1.3, d: 6.3, ty: 1.6 },
-    ventiel: { label: 'Ventiel', az: 0.7, po: 0.75, d: 3.2, ty: 2.95 },
-    etiket: { label: 'Etiket', az: 0.1, po: 1.45, d: 3.7, ty: 1.45 }
+    voor: { label: 'Voorkant', az: 0.16, po: 1.36, d: 5.6, ty: 1.48 },
+    zij: { label: 'Zijkant', az: Math.PI / 2, po: 1.36, d: 5.6, ty: 1.48 },
+    achter: { label: 'Achterkant', az: Math.PI + 0.16, po: 1.36, d: 5.6, ty: 1.48 },
+    ventiel: { label: 'Ventiel', az: 0.7, po: 0.75, d: 3.0, ty: 2.7 },
+    etiket: { label: 'Etiket', az: -0.1, po: 1.5, d: 3.3, ty: 1.3 }
   };
   var DEFAULT_VIEW = 'voor', RESUME_AFTER = 3500, TWEEN_MS = 750;
 
@@ -45,31 +45,32 @@
   function heavyText(x, s, px, cx, cy, color) { x.font = '700 ' + px + 'px ' + FONT; x.textAlign = 'center'; x.textBaseline = 'middle'; x.lineJoin = 'round'; x.lineCap = 'round'; x.strokeStyle = color; x.fillStyle = color; x.lineWidth = px * 0.1; x.strokeText(s, cx, cy); x.fillText(s, cx, cy); }
   function chevron(x, cx, cy, h, color) { var w = h * 0.5, t = h * 0.21; x.strokeStyle = color; x.lineWidth = t; x.lineCap = 'round'; x.lineJoin = 'round'; x.beginPath(); x.moveTo(cx - w / 2, cy - h / 2); x.lineTo(cx + w / 2, cy); x.lineTo(cx - w / 2, cy + h / 2); x.stroke(); }
   function ringText(x, cx, cy, r, text, color, px) { x.save(); x.translate(cx, cy); x.fillStyle = color; x.font = '600 ' + px + 'px ' + FONT; x.textAlign = 'center'; x.textBaseline = 'middle'; var n = text.length; for (var i = 0; i < n; i++) { var a = -Math.PI / 2 + (i / n) * Math.PI * 2; x.save(); x.rotate(a); x.translate(0, -r); x.fillText(text[i], 0, 0); x.restore(); } x.restore(); }
-  function paintLabel() {
-    var W = 2048, H = 1540, cv = document.createElement('canvas'); cv.width = W; cv.height = H; var x = cv.getContext('2d');
-    x.clearRect(0, 0, W, H);
-    var cx = W * 0.5, white = '#ffffff';
-    /* the tonal chevron pattern of the real sleeve: rows of small ">>" marks, a few of them yellow */
-    for (var r = -1; r < 20; r++) for (var c = -1; c < 26; c++) { var ppx = c * 82 + (r % 2) * 41, ppy = r * 82 + 20; var yel = (r * 7 + c * 5) % 13 === 0; chevron(x, ppx, ppy, 30, yel ? 'rgba(234,214,31,.22)' : 'rgba(255,255,255,.075)'); chevron(x, ppx + 22, ppy, 30, yel ? 'rgba(234,214,31,.22)' : 'rgba(255,255,255,.075)'); }
-    /* wordmark, reading upwards: F (with its dotted tail) > S T G > S ® */
-    x.save(); x.translate(cx, H * 0.53); x.rotate(-Math.PI / 2);
-    var g = 236, step = 246, seq = ['F', '>', 'S', 'T', 'G', '>', 'S'], x0 = -step * 3;
-    seq.forEach(function (ch, i) { var px = x0 + i * step; if (ch === '>') chevron(x, px, 0, g * 0.84, white); else heavyText(x, ch, g, px, 0, white); });
-    x.fillStyle = white; x.font = '600 36px ' + FONT; x.textAlign = 'center'; x.textBaseline = 'middle'; x.fillText('®', x0 + 6 * step + 118, -92);
-    var sq = 22; for (var row = 0; row < 3; row++) for (var col = 0; col < 5 - row; col++) x.fillRect(x0 - g * 0.5 - 44 - col * 34, -g * 0.5 + 8 + row * 34, sq, sq);
+  function paintLabel() {   /* v59 */
+    var hi = Math.min(window.devicePixelRatio || 1, 2) >= 2 && !matchMedia('(pointer:coarse)').matches;
+    var W = hi ? 3072 : 2048, H = Math.round(W * 1.9 / (Math.PI * 2 * 0.5)), k = W / 2048;   /* texture aspect = circumference : label height, so nothing is stretched */
+    var cv = document.createElement('canvas'); cv.width = W; cv.height = H; var x = cv.getContext('2d'); x.clearRect(0, 0, W, H);
+    var white = '#ffffff'; var U = function (deg) { return W * (0.5 + deg / 360); };   /* u from the angle around the tank; 0 faces the camera in the front view */
+    /* tonal chevron pattern of the real sleeve */
+    for (var r = -1; r < 20; r++) for (var c2 = -1; c2 < 30; c2++) { var ppx = (c2 * 74 + (r % 2) * 37) * k, ppy = (r * 74 + 18) * k; var yel = (r * 7 + c2 * 5) % 13 === 0; var col = yel ? 'rgba(234,214,31,.26)' : 'rgba(255,255,255,.085)'; chevron(x, ppx, ppy, 26 * k, col); chevron(x, ppx + 19 * k, ppy, 26 * k, col); }
+    /* wordmark F>STG>S, reading upwards, 79% of the label height, 15 degrees left of centre, as in the photo */
+    x.save(); x.translate(U(-15), H * 0.53); x.rotate(-Math.PI / 2);
+    var g = 214 * k, step = 164 * k, seq = ['F', '>', 'S', 'T', 'G', '>', 'S'], x0 = -step * 3;
+    seq.forEach(function (ch, i) { var px = x0 + i * step; if (ch === '>') chevron(x, px, 0, g * 0.62, white); else heavyText(x, ch, g, px, 0, white); });
+    x.fillStyle = white; x.font = '600 ' + 30 * k + 'px ' + FONT; x.textAlign = 'center'; x.textBaseline = 'middle'; x.fillText('\u00AE', x0 + 6 * step + 86 * k, -84 * k);
+    var sq = 17 * k; for (var row = 0; row < 3; row++) for (var col2 = 0; col2 < 4 - row; col2++) x.fillRect(x0 - g * 0.42 - 30 * k - col2 * 27 * k, -g * 0.4 + row * 27 * k, sq, sq);
     x.restore();
-    /* stickers, as on the product: yellow 2000 g, small EU badge, the white quality badge, the yellow QR badge */
-    function disc(px, py, r, fill) { x.fillStyle = fill; x.beginPath(); x.arc(px, py, r, 0, Math.PI * 2); x.fill(); }
-    x.save(); x.translate(cx - 232, H * 0.19); x.rotate(-Math.PI / 2); x.fillStyle = YELLOW; x.beginPath(); x.ellipse(0, 0, 64, 40, 0, 0, Math.PI * 2); x.fill(); x.fillStyle = '#111'; x.font = '800 30px ' + FONT; x.textAlign = 'center'; x.textBaseline = 'middle'; x.fillText('2000 g', 0, 1); x.restore();
-    disc(cx - 222, H * 0.29, 40, '#fff'); disc(cx - 222, H * 0.29, 33, YELLOW); x.fillStyle = '#111'; x.font = '800 24px ' + FONT; x.textAlign = 'center'; x.textBaseline = 'middle'; x.fillText('EU', cx - 222, H * 0.29 + 1);
-    disc(cx + 218, H * 0.17, 90, '#fff'); ringText(x, cx + 218, H * 0.17, 70, 'SAME GREAT QUALITY · IMPROVED LOOKS · ', '#111', 17);
-    x.save(); x.translate(cx + 218, H * 0.17); x.rotate(-Math.PI / 2); [[-26, -14], [-6, -14], [14, -14], [-16, 12], [4, 12]].forEach(function (p) { chevron(x, p[0], p[1], 24, '#111'); }); x.restore();
-    disc(cx + 206, H * 0.81, 94, YELLOW); ringText(x, cx + 206, H * 0.81, 74, 'SCAN NOW TO CHECK · BE SURE IT’S ORIGINAL · ', '#111', 16); x.fillStyle = '#fff'; x.fillRect(cx + 206 - 40, H * 0.81 - 40, 80, 80);
-    x.fillStyle = '#111'; for (var qy = 0; qy < 7; qy++) for (var qx = 0; qx < 7; qx++) if ((qx * 7 + qy * 3 + qx * qy) % 3 !== 1 || (qx < 3 && qy < 3) || (qx > 3 && qy < 3) || (qx < 3 && qy > 3)) x.fillRect(cx + 206 - 34 + qx * 10, H * 0.81 - 34 + qy * 10, 9, 9);
-    /* the small print column on the left side of the sleeve */
-    x.save(); x.translate(W * 0.355, H * 0.5); x.rotate(-Math.PI / 2); x.fillStyle = 'rgba(255,255,255,.82)'; x.font = '600 20px ' + FONT; x.textAlign = 'center'; x.textBaseline = 'middle'; x.fillText('ORIGINAL NITROUS OXIDE · FOOD GRADE · 2000 g · N2O 99,9% · 165 BAR TESTED · PROFESSIONAL USE ONLY · 18+', 0, 0); x.restore();
-    x.save(); x.translate(W * 0.31, H * 0.52); x.rotate(Math.PI / 4); x.fillStyle = '#e8501e'; x.fillRect(-36, -36, 72, 72); x.fillStyle = '#fff'; x.fillRect(-28, -28, 56, 56); x.restore(); x.fillStyle = '#111'; x.font = '800 24px ' + FONT; x.textAlign = 'center'; x.textBaseline = 'middle'; x.fillText('N2O', W * 0.31, H * 0.52 + 1);
-    var t = new T.CanvasTexture(cv); t.colorSpace = T.SRGBColorSpace; t.anisotropy = Math.min(8, renderer.capabilities.getMaxAnisotropy()); return t;
+    /* stickers where the photo has them */
+    function disc(px, py, rr, fill) { x.fillStyle = fill; x.beginPath(); x.arc(px, py, rr, 0, Math.PI * 2); x.fill(); }
+    x.save(); x.translate(U(-52), H * 0.12); x.rotate(-Math.PI / 2); x.fillStyle = YELLOW; x.beginPath(); x.ellipse(0, 0, 54 * k, 34 * k, 0, 0, Math.PI * 2); x.fill(); x.fillStyle = '#111'; x.font = '800 ' + 26 * k + 'px ' + FONT; x.textAlign = 'center'; x.textBaseline = 'middle'; x.fillText('2000 g', 0, 1); x.restore();
+    disc(U(-44), H * 0.215, 34 * k, '#fff'); disc(U(-44), H * 0.215, 28 * k, YELLOW); x.fillStyle = '#111'; x.font = '800 ' + 20 * k + 'px ' + FONT; x.textAlign = 'center'; x.textBaseline = 'middle'; x.fillText('EU', U(-44), H * 0.215 + k);
+    disc(U(26), H * 0.145, 78 * k, '#fff'); ringText(x, U(26), H * 0.145, 60 * k, 'SAME GREAT QUALITY \u00B7 IMPROVED LOOKS \u00B7 ', '#111', 15 * k);
+    x.save(); x.translate(U(26), H * 0.145); x.rotate(-Math.PI / 2); [[-22, -12], [-5, -12], [12, -12], [-14, 10], [3, 10]].forEach(function (p) { chevron(x, p[0] * k, p[1] * k, 20 * k, '#111'); }); x.restore();
+    disc(U(19), H * 0.86, 80 * k, YELLOW); ringText(x, U(19), H * 0.86, 63 * k, 'SCAN NOW TO CHECK \u00B7 BE SURE IT\u2019S ORIGINAL \u00B7 ', '#111', 14 * k); x.fillStyle = '#fff'; x.fillRect(U(19) - 34 * k, H * 0.86 - 34 * k, 68 * k, 68 * k);
+    x.fillStyle = '#111'; for (var qy = 0; qy < 7; qy++) for (var qx = 0; qx < 7; qx++) if ((qx * 7 + qy * 3 + qx * qy) % 3 !== 1 || (qx < 3 && qy < 3) || (qx > 3 && qy < 3) || (qx < 3 && qy > 3)) x.fillRect(U(19) - 29 * k + qx * 8.5 * k, H * 0.86 - 29 * k + qy * 8.5 * k, 7.5 * k, 7.5 * k);
+    /* small print column and warning diamond on the left side */
+    x.save(); x.translate(U(-72), H * 0.5); x.rotate(-Math.PI / 2); x.fillStyle = 'rgba(255,255,255,.85)'; x.font = '600 ' + 17 * k + 'px ' + FONT; x.textAlign = 'center'; x.textBaseline = 'middle'; x.fillText('ORIGINAL NITROUS OXIDE \u00B7 FOOD GRADE \u00B7 2000 g \u00B7 N2O 99,9% \u00B7 165 BAR TESTED \u00B7 PROFESSIONAL USE ONLY \u00B7 18+', 0, 0); x.restore();
+    x.save(); x.translate(U(-95), H * 0.5); x.rotate(Math.PI / 4); x.fillStyle = '#e8501e'; x.fillRect(-32 * k, -32 * k, 64 * k, 64 * k); x.fillStyle = '#fff'; x.fillRect(-25 * k, -25 * k, 50 * k, 50 * k); x.restore(); x.fillStyle = '#111'; x.font = '800 ' + 21 * k + 'px ' + FONT; x.textAlign = 'center'; x.textBaseline = 'middle'; x.fillText('N2O', U(-95), H * 0.5 + k);
+    var t = new T.CanvasTexture(cv); t.colorSpace = T.SRGBColorSpace; t.anisotropy = Math.min(16, renderer.capabilities.getMaxAnisotropy()); return t;
   }
   function paintBand() {
     var cv = document.createElement('canvas'); cv.width = 2048; cv.height = 64; var x = cv.getContext('2d'); x.fillStyle = YELLOW; x.fillRect(0, 0, 2048, 64); x.fillStyle = '#15171c'; x.font = '600 22px ' + FONT; x.textBaseline = 'middle';
@@ -85,31 +86,31 @@
     var yellow = new T.MeshStandardMaterial({ color: YELLOW, metalness: 0.05, roughness: 0.45 });
     var R = 0.5, SEG = 128;
     var mk = function (geo, mat, y, cast) { var m = new T.Mesh(geo, mat); m.position.y = y; m.castShadow = cast !== false; m.receiveShadow = true; g.add(m); return m; };
-    /* proportions of the real tank (height about 2.85 x the width): black foot, navy body, yellow band, black cap, brass nozzle */
-    var cap = function (r, y0, y1, eb, et) { var p = [new T.Vector2(0, y0)], i, a; if (eb > 0) { for (i = 0; i <= 6; i++) { a = (i / 6) * Math.PI / 2; p.push(new T.Vector2(r - eb + Math.sin(a) * eb, y0 + eb - Math.cos(a) * eb)); } } else p.push(new T.Vector2(r, y0)); if (et > 0) { for (i = 0; i <= 6; i++) { a = (i / 6) * Math.PI / 2; p.push(new T.Vector2(r - et + Math.cos(a) * et, y1 - et + Math.sin(a) * et)); } } else p.push(new T.Vector2(r, y1)); p.push(new T.Vector2(0, y1)); return new T.LatheGeometry(p, SEG); };
-    mk(cap(0.55, 0, 0.3, 0.07, 0.015), black, 0);
-    mk(new T.CylinderGeometry(R, R, 2.34, SEG, 1, true), navy, 1.47);
-    var band = new T.Mesh(new T.CylinderGeometry(R + 0.004, R + 0.004, 0.08, SEG, 1, true), new T.MeshStandardMaterial({ map: paintBand(), metalness: 0.05, roughness: 0.45 })); band.position.y = 2.59; g.add(band);
-    mk(cap(0.555, 2.63, 3.0, 0.02, 0.075), black, 0);
-    var inner = new T.Mesh(new T.TorusGeometry(0.21, 0.012, 10, 64), new T.MeshStandardMaterial({ color: '#1b1e24', metalness: 0.2, roughness: 0.6 })); inner.rotation.x = Math.PI / 2; inner.position.y = 3.0; g.add(inner);
+    /* proportions measured on the product photo: width 1.06, foot 0.40, body 1.94, cap 0.42, nozzle 0.20 (total 2.96 = 2.8 x the width) */
+    var cap = function (r, y0, y1, eb, et) { var p = [new T.Vector2(0, y0)], i, a; if (eb > 0) { for (i = 0; i <= 8; i++) { a = (i / 8) * Math.PI / 2; p.push(new T.Vector2(r - eb + Math.sin(a) * eb, y0 + eb - Math.cos(a) * eb)); } } else p.push(new T.Vector2(r, y0)); if (et > 0) { for (i = 0; i <= 8; i++) { a = (i / 8) * Math.PI / 2; p.push(new T.Vector2(r - et + Math.cos(a) * et, y1 - et + Math.sin(a) * et)); } } else p.push(new T.Vector2(r, y1)); p.push(new T.Vector2(0, y1)); return new T.LatheGeometry(p, SEG); };
+    mk(cap(0.53, 0, 0.4, 0.07, 0.012), black, 0);
+    mk(new T.CylinderGeometry(R, R, 1.94, SEG, 1, true), navy, 1.37);
+    var band = new T.Mesh(new T.CylinderGeometry(R + 0.004, R + 0.004, 0.07, SEG, 1, true), new T.MeshStandardMaterial({ map: paintBand(), metalness: 0.05, roughness: 0.45 })); band.position.y = 2.295; g.add(band);
+    mk(cap(0.53, 2.34, 2.76, 0.012, 0.06), black, 0);
+    var inner = new T.Mesh(new T.TorusGeometry(0.2, 0.012, 10, 64), new T.MeshStandardMaterial({ color: '#1b1e24', metalness: 0.2, roughness: 0.6 })); inner.rotation.x = Math.PI / 2; inner.position.y = 2.76; g.add(inner);
     var brass = new T.MeshStandardMaterial({ color: '#c9a44a', metalness: 0.95, roughness: 0.32, envMapIntensity: 1.3 });
-    mk(new T.CylinderGeometry(0.11, 0.12, 0.06, 48), brass, 3.03);
-    mk(new T.CylinderGeometry(0.072, 0.072, 0.16, 48), brass, 3.14);
-    mk(new T.CylinderGeometry(0.082, 0.078, 0.11, 48), black, 3.27);
-    mk(new T.CylinderGeometry(0.05, 0.05, 0.04, 48), black, 3.34);
+    mk(new T.CylinderGeometry(0.105, 0.115, 0.05, 48), brass, 2.785);
+    mk(new T.CylinderGeometry(0.07, 0.07, 0.1, 48), brass, 2.86);
+    mk(new T.CylinderGeometry(0.08, 0.076, 0.1, 48), black, 2.955);
+    mk(new T.CylinderGeometry(0.05, 0.05, 0.03, 48), black, 3.02);
     /* label sleeve */
     labelTex = paintLabel();
-    var sleeve = new T.Mesh(new T.CylinderGeometry(R + 0.007, R + 0.007, 2.26, SEG, 1, true, -Math.PI, Math.PI * 2), new T.MeshStandardMaterial({ map: labelTex, transparent: true, depthWrite: false, metalness: 0.05, roughness: 0.55 })); sleeve.position.y = 1.42; g.add(sleeve);
+    var sleeve = new T.Mesh(new T.CylinderGeometry(R + 0.007, R + 0.007, 1.9, SEG, 1, true, -Math.PI, Math.PI * 2), new T.MeshStandardMaterial({ map: labelTex, transparent: true, depthWrite: false, metalness: 0.05, roughness: 0.55 })); sleeve.position.y = 1.37; g.add(sleeve);
     /* carrying strap: a flat band close to the body on the right, clipped to the cap and the foot */
-    var path = new T.CatmullRomCurve3([new T.Vector3(0.575, 2.86, 0), new T.Vector3(0.615, 2.7, 0), new T.Vector3(0.655, 2.25, 0), new T.Vector3(0.67, 1.6, 0), new T.Vector3(0.655, 0.95, 0), new T.Vector3(0.615, 0.45, 0), new T.Vector3(0.575, 0.2, 0)]);
+    var path = new T.CatmullRomCurve3([new T.Vector3(0.555, 2.62, 0), new T.Vector3(0.6, 2.45, 0), new T.Vector3(0.645, 2.0, 0), new T.Vector3(0.66, 1.4, 0), new T.Vector3(0.645, 0.85, 0), new T.Vector3(0.6, 0.5, 0), new T.Vector3(0.555, 0.34, 0)]);
     var shape = new T.Shape(); shape.moveTo(-0.06, -0.02); shape.lineTo(0.06, -0.02); shape.lineTo(0.06, 0.02); shape.lineTo(-0.06, 0.02); shape.closePath();
     var strap = new T.Mesh(new T.ExtrudeGeometry(shape, { steps: 60, bevelEnabled: false, extrudePath: path }), black); strap.castShadow = true; g.add(strap);
-    [[0.57, 2.8], [0.57, 0.26]].forEach(function (c) { var clip = new T.Mesh(new T.BoxGeometry(0.1, 0.2, 0.19), black); clip.position.set(c[0], c[1], 0); clip.castShadow = true; g.add(clip); var slot = new T.Mesh(new T.BoxGeometry(0.02, 0.05, 0.11), new T.MeshStandardMaterial({ color: '#2a2e36', metalness: 0.2, roughness: 0.6 })); slot.position.set(c[0] + 0.05, c[1] + 0.02, 0); g.add(slot); });
+    [[0.555, 2.56], [0.555, 0.4]].forEach(function (c) { var clip = new T.Mesh(new T.BoxGeometry(0.1, 0.2, 0.19), black); clip.position.set(c[0], c[1], 0); clip.castShadow = true; g.add(clip); var slot = new T.Mesh(new T.BoxGeometry(0.02, 0.05, 0.11), new T.MeshStandardMaterial({ color: '#2a2e36', metalness: 0.2, roughness: 0.6 })); slot.position.set(c[0] + 0.05, c[1] + 0.02, 0); g.add(slot); });
     return g;
   }
   function loadOwnModel() {
     return import(VENDOR + 'GLTFLoader.js').then(function (m) { return new Promise(function (res, rej) { new m.GLTFLoader().load(MODEL_URL, res, undefined, rej); }); }).then(function (gltf) {
-      var g = gltf.scene; var box = new T.Box3().setFromObject(g), size = box.getSize(new T.Vector3()), s = 3.3 / Math.max(size.y, 1e-6); g.scale.setScalar(s); box.setFromObject(g); var ctr = box.getCenter(new T.Vector3()); g.position.set(-ctr.x, -box.min.y, -ctr.z);
+      var g = gltf.scene; var box = new T.Box3().setFromObject(g), size = box.getSize(new T.Vector3()), s = 3.0 / Math.max(size.y, 1e-6); g.scale.setScalar(s); box.setFromObject(g); var ctr = box.getCenter(new T.Vector3()); g.position.set(-ctr.x, -box.min.y, -ctr.z);
       g.traverse(function (o) { if (o.isMesh) { o.castShadow = true; o.receiveShadow = true; } }); return g;
     });
   }
@@ -135,8 +136,8 @@
         var glowY = new T.Mesh(new T.CircleGeometry(1.5, 64), new T.MeshBasicMaterial({ color: '#2a2a10', transparent: true, opacity: 0.18 })); glowY.rotation.x = -Math.PI / 2; glowY.position.set(0.8, 0.002, 0.4); scene.add(glowY);
         var glowB = new T.Mesh(new T.CircleGeometry(1.5, 64), new T.MeshBasicMaterial({ color: '#0c1e3a', transparent: true, opacity: 0.22 })); glowB.rotation.x = -Math.PI / 2; glowB.position.set(-0.8, 0.002, -0.3); scene.add(glowB);
         controls = new OrbitControls(camera, renderer.domElement);
-        controls.enableDamping = true; controls.dampingFactor = 0.07; controls.enablePan = false; controls.minDistance = 2.4; controls.maxDistance = 9; controls.minPolarAngle = 0.35; controls.maxPolarAngle = 1.62; controls.rotateSpeed = 0.75; controls.zoomSpeed = 0.8; controls.autoRotateSpeed = 0.9; controls.autoRotate = !reduce.matches;
-        renderer.domElement.style.touchAction = 'pan-y';
+        controls.enableDamping = true; controls.dampingFactor = 0.07; controls.enablePan = false; controls.minDistance = 2.4; controls.maxDistance = 9; controls.minPolarAngle = 0.35; controls.maxPolarAngle = 1.62; controls.rotateSpeed = matchMedia('(pointer:coarse)').matches ? 1.1 : 0.8; controls.zoomSpeed = 0.9; controls.dampingFactor = 0.09; controls.autoRotateSpeed = 0.9; controls.autoRotate = !reduce.matches;
+        renderer.domElement.style.touchAction = 'none';
         controls.addEventListener('start', function () { stage.classList.add('dragging', 'touched'); pauseRotate(); });
         controls.addEventListener('end', function () { stage.classList.remove('dragging'); scheduleResume(); });
         controls.addEventListener('change', function () { needs = true; });
