@@ -70,7 +70,8 @@
   /* floating contact button: tap toggles, desktop hover opens, outside click / Escape closes */
   var fab = document.getElementById('fab'), fabBtn = document.getElementById('fabBtn'), fabMenu = document.getElementById('fabMenu');
   if (fab && fabBtn) {
-    var setOpen = function (v) { fab.classList.toggle('open', v); fabBtn.setAttribute('aria-expanded', v ? 'true' : 'false'); fabMenu.setAttribute('aria-hidden', v ? 'false' : 'true'); };
+    var setOpen = function (v) { fab.classList.toggle('open', v); fabBtn.setAttribute('aria-expanded', v ? 'true' : 'false'); fabMenu.setAttribute('aria-hidden', v ? 'false' : 'true'); Array.prototype.forEach.call(fabMenu.querySelectorAll('a'), function (el) { el.tabIndex = v ? 0 : -1; }); };
+    setOpen(false);   /* closed links are not in the tab order (aria-hidden-focus) */
     fabBtn.addEventListener('click', function (e) { e.stopPropagation(); setOpen(!fab.classList.contains('open')); });
     if (fine) { var t; fab.addEventListener('pointerenter', function () { clearTimeout(t); setOpen(true); }); fab.addEventListener('pointerleave', function () { t = setTimeout(function () { setOpen(false); }, 350); }); }
     document.addEventListener('click', function (e) { if (!fab.contains(e.target)) setOpen(false); });
