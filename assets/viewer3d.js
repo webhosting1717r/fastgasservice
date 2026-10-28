@@ -13,7 +13,7 @@
   var script = document.currentScript, BASE = script ? script.src.replace(/viewer3d\.js.*$/, '') : '/assets/';
   var VENDOR = BASE + 'vendor/three/';
   var MODEL_URL = null;
-  var STRAP_DEG = 91.0;   /* strap position measured on the product photo (degrees to the right of the label's front centre) */
+  var STRAP_DEG = 128.0;   /* strap position measured on the product photo (degrees to the right of the label's front centre) */
   var NAVY = '#1b2740', BLACK = '#0d1015', YELLOW = '#ead61f';
   var VIEWS = {
     voor: { label: 'Voorkant', az: 0.16, po: 1.36, d: 6.9, ty: 1.8 },
@@ -110,9 +110,10 @@
     /* carrying strap: a flat band close to the body on the right, clipped to the cap and the foot */
     var path = new T.CatmullRomCurve3([new T.Vector3(0.555, 3.28, 0), new T.Vector3(0.6, 3.1, 0), new T.Vector3(0.65, 2.55, 0), new T.Vector3(0.67, 1.8, 0), new T.Vector3(0.65, 1.05, 0), new T.Vector3(0.6, 0.55, 0), new T.Vector3(0.555, 0.36, 0)]);
     var shape = new T.Shape(); shape.moveTo(-0.06, -0.02); shape.lineTo(0.06, -0.02); shape.lineTo(0.06, 0.02); shape.lineTo(-0.06, 0.02); shape.closePath();
+    var strapMat = new T.MeshStandardMaterial({ color: '#12151a', metalness: 0.0, roughness: 0.9, envMapIntensity: 0.15 });   /* v64: matte webbing, no gloss line */
     var sg = new T.Group(); sg.rotation.y = (STRAP_DEG - 90) * Math.PI / 180; g.add(sg);   /* v62: strap at its measured angle around the tank */
-    var strap = new T.Mesh(new T.ExtrudeGeometry(shape, { steps: 60, bevelEnabled: false, extrudePath: path }), black); strap.castShadow = true; sg.add(strap);
-    [[0.555, 3.22], [0.555, 0.42]].forEach(function (c) { var clip = new T.Mesh(new T.BoxGeometry(0.1, 0.2, 0.19), black); clip.position.set(c[0], c[1], 0); clip.castShadow = true; sg.add(clip); var slot = new T.Mesh(new T.BoxGeometry(0.02, 0.05, 0.11), new T.MeshStandardMaterial({ color: '#2a2e36', metalness: 0.2, roughness: 0.6 })); slot.position.set(c[0] + 0.05, c[1] + 0.02, 0); sg.add(slot); });
+    var strap = new T.Mesh(new T.ExtrudeGeometry(shape, { steps: 60, bevelEnabled: false, extrudePath: path }), strapMat); strap.castShadow = true; sg.add(strap);
+    [[0.555, 3.22], [0.555, 0.42]].forEach(function (c) { var clip = new T.Mesh(new T.BoxGeometry(0.1, 0.2, 0.19), strapMat); clip.position.set(c[0], c[1], 0); clip.castShadow = true; sg.add(clip); var slot = new T.Mesh(new T.BoxGeometry(0.02, 0.05, 0.11), new T.MeshStandardMaterial({ color: '#2a2e36', metalness: 0.2, roughness: 0.6 })); slot.position.set(c[0] + 0.05, c[1] + 0.02, 0); sg.add(slot); });
     return g;
   }
   function loadOwnModel() {
