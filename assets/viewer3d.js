@@ -100,11 +100,12 @@
     mk(new T.CylinderGeometry(0.08, 0.076, 0.1, 48), black, 3.615);
     mk(new T.CylinderGeometry(0.05, 0.05, 0.03, 48), black, 3.68);
     /* label sleeve: the unwrapped product photo; if it cannot load, the painted label takes over */
-    var sleeveMat = new T.MeshStandardMaterial({ color: NAVY, metalness: 0.08, roughness: 0.52 });
+    var sleeveMat = new T.MeshPhysicalMaterial({ color: NAVY, metalness: 0.0, roughness: 0.46, clearcoat: 0.5, clearcoatRoughness: 0.3, envMapIntensity: 0.85 });   /* v61: laminated print */
     var sleeve = new T.Mesh(new T.CylinderGeometry(R + 0.007, R + 0.007, 2.48, SEG, 1, true, -Math.PI, Math.PI * 2), sleeveMat); sleeve.position.y = 1.66; g.add(sleeve);
     var loader = new T.TextureLoader(); var prep = function (t) { t.colorSpace = T.SRGBColorSpace; t.anisotropy = Math.min(16, renderer.capabilities.getMaxAnisotropy()); return t; };
-    loader.load(BASE + 'tank-label.webp?v=1', function (t) { labelTex = prep(t); sleeveMat.map = labelTex; sleeveMat.color.set('#ffffff'); sleeveMat.needsUpdate = true; needs = true; start(); }, undefined, function () { labelTex = paintLabel(); sleeveMat.map = labelTex; sleeveMat.transparent = true; sleeveMat.depthWrite = false; sleeveMat.needsUpdate = true; needs = true; start(); });
-    loader.load(BASE + 'tank-band.webp?v=1', function (t) { prep(t); t.wrapS = T.RepeatWrapping; bandMat.map = t; bandMat.color.set('#ffffff'); bandMat.needsUpdate = true; needs = true; start(); }, undefined, function () { bandMat.map = paintBand(); bandMat.color.set('#ffffff'); bandMat.needsUpdate = true; needs = true; start(); });
+    var hiTex = Math.min(window.devicePixelRatio || 1, 2) > 1 && !matchMedia('(pointer:coarse)').matches && renderer.capabilities.maxTextureSize >= 4096;
+    loader.load(BASE + (hiTex ? 'tank-label@2x.webp?v=2' : 'tank-label.webp?v=2'), function (t) { labelTex = prep(t); sleeveMat.map = labelTex; sleeveMat.color.set('#ffffff'); sleeveMat.needsUpdate = true; needs = true; start(); }, undefined, function () { labelTex = paintLabel(); sleeveMat.map = labelTex; sleeveMat.transparent = true; sleeveMat.depthWrite = false; sleeveMat.needsUpdate = true; needs = true; start(); });
+    loader.load(BASE + 'tank-band.webp?v=2', function (t) { prep(t); t.wrapS = T.RepeatWrapping; bandMat.map = t; bandMat.color.set('#ffffff'); bandMat.needsUpdate = true; needs = true; start(); }, undefined, function () { bandMat.map = paintBand(); bandMat.color.set('#ffffff'); bandMat.needsUpdate = true; needs = true; start(); });
     /* carrying strap: a flat band close to the body on the right, clipped to the cap and the foot */
     var path = new T.CatmullRomCurve3([new T.Vector3(0.555, 3.28, 0), new T.Vector3(0.6, 3.1, 0), new T.Vector3(0.65, 2.55, 0), new T.Vector3(0.67, 1.8, 0), new T.Vector3(0.65, 1.05, 0), new T.Vector3(0.6, 0.55, 0), new T.Vector3(0.555, 0.36, 0)]);
     var shape = new T.Shape(); shape.moveTo(-0.06, -0.02); shape.lineTo(0.06, -0.02); shape.lineTo(0.06, 0.02); shape.lineTo(-0.06, 0.02); shape.closePath();
