@@ -157,4 +157,5 @@ footer.foot .credit{flex:1 1 100%;opacity:.7}
   .sub-hero::before{background:linear-gradient(to bottom,rgba(7,11,18,.8) 0,rgba(7,11,18,.72) 45%,rgba(7,11,18,.95) 100%)}
 }
 @media (pointer:coarse){input,textarea,select{font-size:max(16px,1em)!important}}
+@media (pointer:coarse){.chapnav a,.regio a{min-height:44px}.fcol li a{min-height:44px}a.ghost{min-height:44px}}
 @media (prefers-reduced-motion:reduce){.btn:active,.hbtn:active{transform:none}}

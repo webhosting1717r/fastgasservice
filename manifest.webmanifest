@@ -1,0 +1,33 @@
+{
+  "name": "Fastgas Service NL",
+  "short_name": "Fastgas",
+  "description": "Fastgas 2 kg tank (2000 gram lachgas) bezorgd in Noord-Holland, Flevoland en Utrecht: 24/7, binnen 20 minuten.",
+  "lang": "nl-NL",
+  "dir": "ltr",
+  "id": "/",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#070b12",
+  "theme_color": "#070b12",
+  "icons": [
+    {
+      "src": "/assets/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/assets/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/assets/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

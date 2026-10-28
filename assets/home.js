@@ -294,7 +294,7 @@ const finePointer=matchMedia('(pointer:fine)');
 let blockAnim=0, blockList=null;
 function currentBlockIndex(){ const secs=blockList||(blockList=Array.from(document.querySelectorAll('main > section:not(#hero)'))); let best=-1,bd=1e9; for(let i=0;i<secs.length;i++){ const d=Math.abs(secs[i].getBoundingClientRect().top); if(d<bd){bd=d;best=i} } return bd<innerHeight*0.5?best:-1; }
 /* v55: a block taller than the screen scrolls natively until its edge is on screen; only then does the next swipe, wheel tick or key page to the neighbour */
-function roomInDir(dir){ const secs=blockList||(blockList=Array.from(document.querySelectorAll('main > section:not(#hero)'))); const vh=innerHeight, mid=vh*0.5; for(const s of secs){ const r=s.getBoundingClientRect(); if(r.top<=mid&&r.bottom>=mid){ return dir>0?r.bottom>vh+10:r.top<-10; } } return false; }
+function roomInDir(dir){ const secs=blockList||(blockList=Array.from(document.querySelectorAll('main > section:not(#hero)'))); const vh=innerHeight, mid=vh*0.5; const gap=(()=>{ const a=document.getElementById('lvhProbe'), b=document.getElementById('svhProbe'); return a&&b?Math.max(0,a.clientHeight-b.clientHeight):0; })(); for(const s of secs){ const r=s.getBoundingClientRect(); if(r.top<=mid&&r.bottom>=mid){ return dir>0?r.bottom>vh+10+gap:r.top<-10; } } return false; }
 function pageBlock(dir){
   const i=currentBlockIndex(); if(i<0)return false;
   const b=document.body.classList; if(b.contains('menu-open')||reduce.matches)return false;
@@ -348,7 +348,7 @@ setTimeout(()=>{ const first=document.querySelector('main > section[data-bg]'); 
 /* v37: one coordinated reveal per block (kicker, title, lead, then the items in order), replayed when a block comes back */
 const blocks=Array.from(document.querySelectorAll('main > section:not(#hero)'));
 /* v55: fit every block on the visible screen. Level 1 and 2 compact the layout, level 3 scales it (never below 76%); whatever still does not fit scrolls natively (roomInDir) */
-const svhProbe=document.getElementById('svhProbe'); const screenH=()=>Math.max(300,(svhProbe&&svhProbe.clientHeight)||innerHeight);
+const svhProbe=document.getElementById('svhProbe'), lvhProbe=document.getElementById('lvhProbe'); const screenH=()=>Math.max(300,(lvhProbe&&lvhProbe.clientHeight)||innerHeight);   /* blocks are as tall as the large viewport; their padding keeps the content inside the small one */
 function naturalH(b){ const mh=b.style.minHeight, cv=b.style.contentVisibility; b.style.minHeight='0'; b.style.contentVisibility='visible'; const h=b.getBoundingClientRect().height; b.style.minHeight=mh; b.style.contentVisibility=cv; return h; }
 function fitBlock(b){ b.removeAttribute('data-fit'); b.style.removeProperty('--zoom'); const vh=screenH(); let h=naturalH(b); if(h<=vh+2)return;
   for(let lvl=1;lvl<=2;lvl++){ b.setAttribute('data-fit',lvl); h=naturalH(b); if(h<=vh+2)return; }
@@ -413,10 +413,14 @@ setTimeout(function(){
     const line='// '+NAMES[r]+' · '+count+' bezorgplaatsen · 24/7 binnen 20 min';
     if(reduce.matches){ rt.innerHTML=line.replace('// '+NAMES[r],'<b>// '+NAMES[r]+'</b>'); pins.forEach(p=>{p.classList.add('show');p.querySelector('.nm').textContent=p.querySelector('.nm').dataset.name}); return; }
     const g=typeInto(rt,line,s=>s.replace('// '+NAMES[r],'<b>// '+NAMES[r]+'</b>'),11,()=>{
-      let i=0; const next=()=>{ if(g!==gen||hot!==r)return; if(i>=pins.length)return; const p=pins[i++], nm=p.querySelector('.nm'), full=nm.dataset.name; p.classList.add('show','typing'); let c=0;
+      let i=0; const next=()=>{ if(g!==gen||hot!==r)return; if(i>=pins.length)return; const p=pins[i++], nm=p.querySelector('.nm'), full=nm.dataset.name; p.classList.add('show','typing'); declutter(); let c=0;
         const step=()=>{ if(g!==gen||hot!==r)return; c++; nm.textContent=full.slice(0,c); if(c<full.length)timer=setTimeout(step,22+Math.random()*26); else { p.classList.remove('typing'); timer=setTimeout(next,60); } }; timer=setTimeout(step,40); };
       next(); });
   }
+  /* v56: labels of pins that sit close together are pushed apart vertically (left and right labels separately), so no label hides behind another at any screen size */
+  function declutter(){ const sides={l:[],r:[]}; for(const p of pinsAll){ p.style.setProperty('--dy','0px'); if(!p.classList.contains('show'))continue; const d=p.querySelector('.dot').getBoundingClientRect(); sides[p.classList.contains('l')?'l':'r'].push({p,x:d.left+d.width/2,y:d.top+d.height/2}); }
+    const lb=pinsAll[0]&&pinsAll[0].querySelector('.lbl'); const H=Math.max(24,(lb&&lb.offsetHeight)||0)+4;
+    for(const g of [sides.l,sides.r]){ g.sort((a,b)=>a.y-b.y); let lastY=-1e9,lastX=0; for(const it of g){ let y=it.y; if(y-lastY<H&&Math.abs(it.x-lastX)<240)y=lastY+H; it.p.style.setProperty('--dy',(y-it.y).toFixed(1)+'px'); lastY=y; lastX=it.x; } } }
   function setHot(r,stick){ if(stick!==undefined)sticky=stick; if(r===hot)return; hot=r; stats.hot=(stats.hot||0)+1; paint(); if(r)reveal(r); else { idle(); strip(null); } }
   /* pixel-accurate hit test on the province masks (the same images that draw the hologram), so hover and tap follow the real shape */
   const maskPix={}; let maskKey='';
@@ -444,7 +448,7 @@ setTimeout(function(){
   function onInteract(){ if(interacted)return; interacted=true; clearAttract(); card.classList.remove('on'); setTimeout(()=>cue.classList.add('on'),1800); }
   provs.forEach(b=>b.addEventListener('focus',onInteract)); stage.addEventListener('pointermove',e=>{ if(wasOn&&regionAt(e.clientX,e.clientY))onInteract(); },{passive:true}); stage.addEventListener('click',e=>{ if(wasOn&&regionAt(e.clientX,e.clientY))onInteract(); });
   map.querySelector('.fit').appendChild(ring);
-  addEventListener('resize',()=>{ if(ring.classList.contains('on'))placeRing(); },{passive:true});
+  addEventListener('resize',()=>{ if(ring.classList.contains('on'))placeRing(); declutter(); },{passive:true});
   /* the readout types its hint when the map scene arrives, and clears when it leaves */
   const mapBand=bands.find(b=>b.el===map);
   const watch=()=>{ if(!masksArmed&&shown>0.62)armMasks(); if(!heroOnScreen){ setTimeout(watch,250); return; } const on=!!mapBand&&mapBand.on&&mapBand.k>0.3; if(on!==wasOn){ wasOn=on; if(on){ if(!hot)idle(); if(!interacted){ showCard(); attract(); } else cue.classList.add('on'); } else { gen++; clearTimer(); rt.textContent=''; setHot(null,false); clearAttract(); card.classList.remove('on'); cue.classList.remove('on'); cardShown=false; } } requestAnimationFrame(watch); };
