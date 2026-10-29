@@ -42,6 +42,11 @@ if(intro){ if(reduce.matches){intro.remove();document.body.classList.add('intro-
   if(tel.ok) document.querySelectorAll('.ph').forEach(s=>{ if(!s.closest('[data-ph]')) s.textContent=disp; });   /* v45: number also in running text */
   if(wa.ok) document.querySelectorAll('.phw').forEach(s=>{ if(!s.closest('[data-ph]')) s.textContent=dispW; });
 })();
-const rv=new IntersectionObserver(es=>{ for(const e of es){ if(!e.isIntersecting)continue; e.target.classList.add('in'); (e.target.matches('.kicker')?[e.target]:Array.from(e.target.querySelectorAll('.kicker'))).forEach(decode); rv.unobserve(e.target); } },{threshold:0.15});
-document.querySelectorAll('.rv').forEach(el=>rv.observe(el));
+/* v66: reveal that cannot stay hidden: observer (threshold 0) + geometric sweep + fail-safe */
+const rvEls=Array.from(document.querySelectorAll('.rv'));
+const rvShow=e=>{ if(e.classList.contains('in'))return; e.classList.add('in'); (e.matches('.kicker')?[e]:Array.from(e.querySelectorAll('.kicker'))).forEach(decode); };
+const rvSweep=()=>{ const h=window.innerHeight||document.documentElement.clientHeight||800; for(const e of rvEls){ if(e.classList.contains('in'))continue; const r=e.getBoundingClientRect(); if(r.bottom>0&&r.top<h)rvShow(e); } };
+if('IntersectionObserver' in window){ const rv=new IntersectionObserver(es=>{ for(const e of es){ if(!e.isIntersecting)continue; rvShow(e.target); rv.unobserve(e.target); } },{threshold:0,rootMargin:'0px 0px -4% 0px'}); rvEls.forEach(el=>rv.observe(el)); }
+rvSweep(); addEventListener('scroll',rvSweep,{passive:true}); addEventListener('resize',rvSweep); addEventListener('pageshow',rvSweep); addEventListener('load',()=>{ rvSweep(); setTimeout(rvSweep,350); });
+setTimeout(()=>rvEls.forEach(rvShow),2500);
 })();

@@ -190,6 +190,9 @@ footer.foot .credit{flex:1 1 100%;opacity:.7}
   .stat .d,.rv span,.rv span *,.calc-note,.contact-list b{font-size:12px!important}
 }
 
+/* ---------- v66: no hidden content without scripting ---------- */
+@media (scripting:none){.rv{opacity:1!important;transform:none!important}}
+
 /* ---------- 3D product viewer (subpages) ---------- */
 .v3d-block .v3d-head{text-align:center;max-width:64ch;margin:0 auto}
 .v3d-block .v3d-head .lead{margin-left:auto;margin-right:auto}
