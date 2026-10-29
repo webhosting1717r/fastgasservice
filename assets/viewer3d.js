@@ -21,7 +21,7 @@
     zij: { label: 'Zijkant', az: Math.PI / 2, po: 1.36, d: 6.9, ty: 1.8 },
     achter: { label: 'Achterkant', az: Math.PI - 0.15, po: 1.36, d: 6.9, ty: 1.8 },
     bovenkant: { label: 'Bovenkant', az: 0.7, po: 0.75, d: 3.0, ty: 3.35 },
-    etiket: { label: 'Etiket', az: -0.1, po: 1.5, d: 3.9, ty: 1.6 },
+    etiket: { label: 'Etiket', az: -0.1, po: 1.5, d: 4.8, ty: 1.7 },
     dopje: { label: 'Dopje', az: 2.75, po: 1.2, d: 1.35, ty: 0.3, tx: DOPJE.x, tz: DOPJE.z, min: 0.7, dopje: true }
   };
   var DEFAULT_VIEW = 'voor', RESUME_AFTER = 3500, TWEEN_MS = 750;
@@ -108,8 +108,8 @@
     var sleeve = new T.Mesh(new T.CylinderGeometry(R + 0.007, R + 0.007, 2.48, SEG, 1, true, -Math.PI, Math.PI * 2), sleeveMat); sleeve.position.y = 1.66; g.add(sleeve);
     var loader = new T.TextureLoader(); var prep = function (t) { t.colorSpace = T.SRGBColorSpace; t.anisotropy = Math.min(16, renderer.capabilities.getMaxAnisotropy()); return t; };
     var hiTex = Math.min(window.devicePixelRatio || 1, 2) > 1 && !matchMedia('(pointer:coarse)').matches && renderer.capabilities.maxTextureSize >= 4096;
-    loader.load(BASE + (hiTex ? 'tank-label@2x.webp?v=13' : 'tank-label.webp?v=13'), function (t) { labelTex = prep(t); sleeveMat.map = labelTex; sleeveMat.color.set('#ffffff'); sleeveMat.needsUpdate = true; needs = true; start(); }, undefined, function () { labelTex = paintLabel(); sleeveMat.map = labelTex; sleeveMat.transparent = true; sleeveMat.depthWrite = false; sleeveMat.needsUpdate = true; needs = true; start(); });
-    loader.load(BASE + 'tank-band.webp?v=13', function (t) { prep(t); t.wrapS = T.RepeatWrapping; bandMat.map = t; bandMat.color.set('#ffffff'); bandMat.needsUpdate = true; needs = true; start(); }, undefined, function () { bandMat.map = paintBand(); bandMat.color.set('#ffffff'); bandMat.needsUpdate = true; needs = true; start(); });
+    loader.load(BASE + (hiTex ? 'tank-label@2x.webp?v=14' : 'tank-label.webp?v=14'), function (t) { labelTex = prep(t); sleeveMat.map = labelTex; sleeveMat.color.set('#ffffff'); sleeveMat.needsUpdate = true; needs = true; start(); }, undefined, function () { labelTex = paintLabel(); sleeveMat.map = labelTex; sleeveMat.transparent = true; sleeveMat.depthWrite = false; sleeveMat.needsUpdate = true; needs = true; start(); });
+    loader.load(BASE + 'tank-band.webp?v=14', function (t) { prep(t); t.wrapS = T.RepeatWrapping; bandMat.map = t; bandMat.color.set('#ffffff'); bandMat.needsUpdate = true; needs = true; start(); }, undefined, function () { bandMat.map = paintBand(); bandMat.color.set('#ffffff'); bandMat.needsUpdate = true; needs = true; start(); });
     /* carrying strap: a flat band close to the body on the right, clipped to the cap and the foot */
     var path = new T.CatmullRomCurve3([new T.Vector3(0.555, 3.28, 0), new T.Vector3(0.6, 3.1, 0), new T.Vector3(0.65, 2.55, 0), new T.Vector3(0.67, 1.8, 0), new T.Vector3(0.65, 1.05, 0), new T.Vector3(0.6, 0.55, 0), new T.Vector3(0.555, 0.36, 0)]);
     var shape = new T.Shape(); shape.moveTo(-0.06, -0.02); shape.lineTo(0.06, -0.02); shape.lineTo(0.06, 0.02); shape.lineTo(-0.06, 0.02); shape.closePath();
