@@ -223,3 +223,6 @@ footer.foot .credit{flex:1 1 100%;opacity:.7}
 @keyframes v3dspin{to{transform:rotate(360deg)}}
 @media (max-width:720px){.v3d-stage{aspect-ratio:1/1;border-radius:20px}.v3d-ui{gap:12px 14px}.v3d-views button,.v3d-reset{min-height:44px;padding:0 14px}}
 @media (prefers-reduced-motion:reduce){.v3d-loader i{animation:none}.v3d-canvas,.v3d-fallback,.v3d-hint{transition:none}}
+/* v68: dopje view: the stage goes dark so the loose dopje stands alone (the poster behind shows the whole tank) */
+.v3d-stage::before{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse 70% 60% at 50% 58%,rgba(22,32,48,.92),rgba(6,9,15,.98));opacity:0;transition:opacity .7s ease}
+.v3d-stage.dopje-mode::before{opacity:1}

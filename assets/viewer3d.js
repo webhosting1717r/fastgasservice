@@ -13,14 +13,16 @@
   var script = document.currentScript, BASE = script ? script.src.replace(/viewer3d\.js.*$/, '') : '/assets/';
   var VENDOR = BASE + 'vendor/three/';
   var MODEL_URL = null;
-  var STRAP_DEG = 128.0;   /* strap position measured on the product photo (degrees to the right of the label's front centre) */
+  var STRAP_DEG = 64.0;   /* strap position measured on the product photo (degrees to the right of the label's front centre) */
+  var DOPJE = { x: 1.65, z: 1.0 };   /* v67: where the loose dopje stands, in the dopje view only */
   var NAVY = '#1b2740', BLACK = '#0d1015', YELLOW = '#ead61f';
   var VIEWS = {
     voor: { label: 'Voorkant', az: 0.16, po: 1.36, d: 6.9, ty: 1.8 },
     zij: { label: 'Zijkant', az: Math.PI / 2, po: 1.36, d: 6.9, ty: 1.8 },
     achter: { label: 'Achterkant', az: Math.PI - 0.15, po: 1.36, d: 6.9, ty: 1.8 },
-    ventiel: { label: 'Ventiel', az: 0.7, po: 0.75, d: 3.0, ty: 3.35 },
-    etiket: { label: 'Etiket', az: -0.1, po: 1.5, d: 3.9, ty: 1.6 }
+    bovenkant: { label: 'Bovenkant', az: 0.7, po: 0.75, d: 3.0, ty: 3.35 },
+    etiket: { label: 'Etiket', az: -0.1, po: 1.5, d: 3.9, ty: 1.6 },
+    dopje: { label: 'Dopje', az: 2.75, po: 1.2, d: 1.35, ty: 0.3, tx: DOPJE.x, tz: DOPJE.z, min: 0.7, dopje: true }
   };
   var DEFAULT_VIEW = 'voor', RESUME_AFTER = 3500, TWEEN_MS = 750;
 
@@ -28,6 +30,8 @@
   var wrap = stage.querySelector('.v3d-canvas'), ui = document.querySelector('.v3d-ui');
   var viewsBox = ui && ui.querySelector('.v3d-views'), resetBtn = ui && ui.querySelector('.v3d-reset');
   var reduce = matchMedia('(prefers-reduced-motion: reduce)');
+  var tankMeshes = [], tankMats = [];   /* v68 */
+  var dopje = null, dopjeS = 0, dopjeOn = false, dopjeT = 0, tweenMin = 2.6;
   var T = null, renderer = null, scene = null, camera = null, controls = null, pmrem = null, raf = 0, active = false, visible = false, tween = null, resumeT = 0, started = false, disposed = false, labelTex = null, needs = true;
 
   function fallback(reason) { stage.classList.add('fallback'); if (ui) ui.hidden = true; var n = document.querySelector('.v3d-note'); if (n) n.textContent = '3D-weergave is op dit apparaat niet beschikbaar; je ziet de foto van de Fastgas tank.'; if (reason && window.console) console.info('3D viewer fallback:', reason); }
@@ -94,19 +98,18 @@
     var bandMat = new T.MeshStandardMaterial({ color: YELLOW, metalness: 0.05, roughness: 0.45 });
     var band = new T.Mesh(new T.CylinderGeometry(R + 0.004, R + 0.004, 0.09, SEG, 1, true, -Math.PI, Math.PI * 2), bandMat); band.position.y = 2.945; g.add(band);
     mk(cap(0.53, 2.99, 3.42, 0.012, 0.06), black, 0);
-    var inner = new T.Mesh(new T.TorusGeometry(0.2, 0.012, 10, 64), new T.MeshStandardMaterial({ color: '#1b1e24', metalness: 0.2, roughness: 0.6 })); inner.rotation.x = Math.PI / 2; inner.position.y = 3.42; g.add(inner);
-    var brass = new T.MeshStandardMaterial({ color: '#c9a44a', metalness: 0.95, roughness: 0.32, envMapIntensity: 1.3 });
-    mk(new T.CylinderGeometry(0.105, 0.115, 0.05, 48), brass, 3.445);
-    mk(new T.CylinderGeometry(0.07, 0.07, 0.1, 48), brass, 3.52);
-    mk(new T.CylinderGeometry(0.08, 0.076, 0.1, 48), black, 3.615);
-    mk(new T.CylinderGeometry(0.05, 0.05, 0.03, 48), black, 3.68);
+    /* v67: the lid as photographed from above: flat, with a round centre plug, a groove ring around it and one small dot near the edge */
+    var plugMat = new T.MeshPhysicalMaterial({ color: '#101318', metalness: 0.1, roughness: 0.34, clearcoat: 0.4, clearcoatRoughness: 0.3 });
+    mk(new T.CylinderGeometry(0.15, 0.155, 0.016, 64), plugMat, 3.428);
+    var groove = new T.Mesh(new T.TorusGeometry(0.185, 0.005, 8, 96), new T.MeshStandardMaterial({ color: '#07090c', roughness: 0.7 })); groove.rotation.x = Math.PI / 2; groove.position.y = 3.421; g.add(groove);
+    var dot = new T.Mesh(new T.CylinderGeometry(0.013, 0.013, 0.01, 20), new T.MeshStandardMaterial({ color: '#2a2d33', metalness: 0.6, roughness: 0.4 })); dot.position.set(0.395, 3.423, 0.12); g.add(dot);
     /* label sleeve: the unwrapped product photo; if it cannot load, the painted label takes over */
-    var sleeveMat = new T.MeshStandardMaterial({ color: NAVY, metalness: 0.0, roughness: 0.78, envMapIntensity: 0.35 });   /* v63: matte print, no clearcoat (its environment reflection showed as a vertical gloss streak) */
+    var sleeveMat = new T.MeshStandardMaterial({ color: NAVY, metalness: 0.0, roughness: 0.66, envMapIntensity: 0.5 });   /* v63/v67: semi-matte print, no clearcoat (its environment reflection showed as a vertical gloss streak) */
     var sleeve = new T.Mesh(new T.CylinderGeometry(R + 0.007, R + 0.007, 2.48, SEG, 1, true, -Math.PI, Math.PI * 2), sleeveMat); sleeve.position.y = 1.66; g.add(sleeve);
     var loader = new T.TextureLoader(); var prep = function (t) { t.colorSpace = T.SRGBColorSpace; t.anisotropy = Math.min(16, renderer.capabilities.getMaxAnisotropy()); return t; };
     var hiTex = Math.min(window.devicePixelRatio || 1, 2) > 1 && !matchMedia('(pointer:coarse)').matches && renderer.capabilities.maxTextureSize >= 4096;
-    loader.load(BASE + (hiTex ? 'tank-label@2x.webp?v=9' : 'tank-label.webp?v=9'), function (t) { labelTex = prep(t); sleeveMat.map = labelTex; sleeveMat.color.set('#ffffff'); sleeveMat.needsUpdate = true; needs = true; start(); }, undefined, function () { labelTex = paintLabel(); sleeveMat.map = labelTex; sleeveMat.transparent = true; sleeveMat.depthWrite = false; sleeveMat.needsUpdate = true; needs = true; start(); });
-    loader.load(BASE + 'tank-band.webp?v=9', function (t) { prep(t); t.wrapS = T.RepeatWrapping; bandMat.map = t; bandMat.color.set('#ffffff'); bandMat.needsUpdate = true; needs = true; start(); }, undefined, function () { bandMat.map = paintBand(); bandMat.color.set('#ffffff'); bandMat.needsUpdate = true; needs = true; start(); });
+    loader.load(BASE + (hiTex ? 'tank-label@2x.webp?v=11' : 'tank-label.webp?v=11'), function (t) { labelTex = prep(t); sleeveMat.map = labelTex; sleeveMat.color.set('#ffffff'); sleeveMat.needsUpdate = true; needs = true; start(); }, undefined, function () { labelTex = paintLabel(); sleeveMat.map = labelTex; sleeveMat.transparent = true; sleeveMat.depthWrite = false; sleeveMat.needsUpdate = true; needs = true; start(); });
+    loader.load(BASE + 'tank-band.webp?v=11', function (t) { prep(t); t.wrapS = T.RepeatWrapping; bandMat.map = t; bandMat.color.set('#ffffff'); bandMat.needsUpdate = true; needs = true; start(); }, undefined, function () { bandMat.map = paintBand(); bandMat.color.set('#ffffff'); bandMat.needsUpdate = true; needs = true; start(); });
     /* carrying strap: a flat band close to the body on the right, clipped to the cap and the foot */
     var path = new T.CatmullRomCurve3([new T.Vector3(0.555, 3.28, 0), new T.Vector3(0.6, 3.1, 0), new T.Vector3(0.65, 2.55, 0), new T.Vector3(0.67, 1.8, 0), new T.Vector3(0.65, 1.05, 0), new T.Vector3(0.6, 0.55, 0), new T.Vector3(0.555, 0.36, 0)]);
     var shape = new T.Shape(); shape.moveTo(-0.06, -0.02); shape.lineTo(0.06, -0.02); shape.lineTo(0.06, 0.02); shape.lineTo(-0.06, 0.02); shape.closePath();
@@ -114,7 +117,30 @@
     var sg = new T.Group(); sg.rotation.y = (STRAP_DEG - 90) * Math.PI / 180; g.add(sg);   /* v62: strap at its measured angle around the tank */
     var strap = new T.Mesh(new T.ExtrudeGeometry(shape, { steps: 60, bevelEnabled: false, extrudePath: path }), strapMat); strap.castShadow = true; sg.add(strap);
     [[0.555, 3.22], [0.555, 0.42]].forEach(function (c) { var clip = new T.Mesh(new T.BoxGeometry(0.1, 0.2, 0.19), strapMat); clip.position.set(c[0], c[1], 0); clip.castShadow = true; sg.add(clip); var slot = new T.Mesh(new T.BoxGeometry(0.02, 0.05, 0.11), new T.MeshStandardMaterial({ color: '#2a2e36', metalness: 0.2, roughness: 0.6 })); slot.position.set(c[0] + 0.05, c[1] + 0.02, 0); sg.add(slot); });
+    g.traverse(function (o) { if (o.isMesh) { tankMeshes.push(o); [].concat(o.material).forEach(function (m) { if (tankMats.indexOf(m) < 0) { m.userData.t0 = !!m.transparent; tankMats.push(m); } }); } });   /* v68: collected before the dopje exists */
+    dopje = buildDopje(); dopje.position.set(DOPJE.x, 0, DOPJE.z); dopje.visible = false; dopje.scale.setScalar(0.4); g.add(dopje);
     return g;
+  }
+  /* v67: the loose dopje (body diameter of the tank = 1): grooved stub, ribbed collar, cone with a steel ring and a cross in the opening */
+  function buildDopje() {
+    var d = new T.Group();
+    var plastic = new T.MeshPhysicalMaterial({ color: '#14171c', metalness: 0.05, roughness: 0.46, clearcoat: 0.3, clearcoatRoughness: 0.35 });
+    var steel = new T.MeshStandardMaterial({ color: '#c4c9d1', metalness: 1, roughness: 0.28, envMapIntensity: 1.2 });
+    var V = function (a) { return a.map(function (p) { return new T.Vector2(p[0], p[1]); }); };
+    var m = function (geo, mat, x, y, z) { var o = new T.Mesh(geo, mat); o.position.set(x || 0, y || 0, z || 0); o.castShadow = true; o.receiveShadow = true; d.add(o); return o; };
+    /* stub: three shallow grooves */
+    m(new T.LatheGeometry(V([[0.001, 0], [0.056, 0], [0.056, 0.026], [0.05, 0.03], [0.056, 0.034], [0.056, 0.062], [0.05, 0.066], [0.056, 0.07], [0.056, 0.098], [0.05, 0.102], [0.056, 0.106], [0.056, 0.13], [0.001, 0.13]]), 64), plastic);
+    /* collar with 20 ribs */
+    m(new T.CylinderGeometry(0.094, 0.098, 0.078, 64), plastic, 0, 0.169, 0);
+    for (var i = 0; i < 20; i++) { var a = i / 20 * Math.PI * 2; var rib = m(new T.BoxGeometry(0.014, 0.07, 0.012), plastic, Math.sin(a) * 0.098, 0.169, Math.cos(a) * 0.098); rib.rotation.y = a; }
+    /* shoulder and cone */
+    var cone = [[0.098, 0.208], [0.09, 0.216], [0.082, 0.224]]; for (var k = 1; k <= 24; k++) { var t = k / 24; cone.push([0.082 - 0.044 * Math.pow(t, 0.85), 0.224 + 0.366 * t]); } cone.push([0.034, 0.594]); cone.push([0.026, 0.594]);
+    m(new T.LatheGeometry(V(cone), 64), plastic);
+    /* opening: steel ring, dark well and a cross */
+    var ring = m(new T.TorusGeometry(0.03, 0.007, 12, 48), steel, 0, 0.594, 0); ring.rotation.x = Math.PI / 2;
+    m(new T.CylinderGeometry(0.026, 0.026, 0.004, 32), new T.MeshStandardMaterial({ color: '#05070a', roughness: 0.9 }), 0, 0.585, 0);
+    m(new T.BoxGeometry(0.052, 0.005, 0.007), steel, 0, 0.587, 0); m(new T.BoxGeometry(0.007, 0.005, 0.052), steel, 0, 0.587, 0);
+    return d;
   }
   function loadOwnModel() {
     return import(VENDOR + 'GLTFLoader.js').then(function (m) { return new Promise(function (res, rej) { new m.GLTFLoader().load(MODEL_URL, res, undefined, rej); }); }).then(function (gltf) {
@@ -159,21 +185,24 @@
       .catch(function (e) { fallback(e && e.message); });
   }
   function resize() { if (!renderer) return; var w = stage.clientWidth, h = stage.clientHeight; if (!w || !h) return; renderer.setSize(w, h, false); camera.aspect = w / h; camera.updateProjectionMatrix(); needs = true; }
-  function spherical() { var v = new T.Vector3().subVectors(camera.position, controls.target); var s = new T.Spherical().setFromVector3(v); return { az: s.theta, po: s.phi, d: s.radius, ty: controls.target.y }; }
-  function applyView(v) { controls.target.set(0, v.ty, 0); camera.position.setFromSphericalCoords(v.d, v.po, v.az).add(controls.target); controls.update(); needs = true; }
+  function spherical() { var v = new T.Vector3().subVectors(camera.position, controls.target); var s = new T.Spherical().setFromVector3(v); return { az: s.theta, po: s.phi, d: s.radius, ty: controls.target.y, tx: controls.target.x, tz: controls.target.z }; }
+  function applyView(v) { controls.target.set(v.tx || 0, v.ty, v.tz || 0); camera.position.setFromSphericalCoords(v.d, v.po, v.az).add(controls.target); controls.update(); needs = true; }
   function goView(k, user) {
-    var v = VIEWS[k]; if (!v) return; markView(k); if (user) { stage.classList.add('touched'); pauseRotate(); scheduleResume(); }
+    var v = VIEWS[k]; if (!v) return; markView(k); dopjeOn = !!v.dopje; stage.classList.toggle('dopje-mode', dopjeOn); start(); if (user) { stage.classList.add('touched'); pauseRotate(); scheduleResume(); }
     if (!controls) return;
-    if (reduce.matches) { applyView(v); return; }
+    tweenMin = v.min || 2.6; if (reduce.matches) { applyView(v); controls.minDistance = tweenMin; dopjeS = dopjeOn ? 1 : 0; syncDopje(); return; }
+    if (tweenMin < controls.minDistance) controls.minDistance = tweenMin;
     var from = spherical(); var dAz = v.az - from.az; dAz = Math.atan2(Math.sin(dAz), Math.cos(dAz));
-    tween = { t0: performance.now(), from: from, to: { az: from.az + dAz, po: v.po, d: v.d, ty: v.ty } }; start();
+    tween = { t0: performance.now(), from: from, to: { az: from.az + dAz, po: v.po, d: v.d, ty: v.ty, tx: v.tx || 0, tz: v.tz || 0 } }; start();
   }
-  function stepTween(now) { var t = Math.min(1, (now - tween.t0) / TWEEN_MS), e = t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2, f = tween.from, o = tween.to; applyView({ az: f.az + (o.az - f.az) * e, po: f.po + (o.po - f.po) * e, d: f.d + (o.d - f.d) * e, ty: f.ty + (o.ty - f.ty) * e }); if (t >= 1) tween = null; }
+  function stepTween(now) { var t = Math.min(1, (now - tween.t0) / TWEEN_MS), e = t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2, f = tween.from, o = tween.to; applyView({ az: f.az + (o.az - f.az) * e, po: f.po + (o.po - f.po) * e, d: f.d + (o.d - f.d) * e, ty: f.ty + (o.ty - f.ty) * e, tx: f.tx + (o.tx - f.tx) * e, tz: f.tz + (o.tz - f.tz) * e }); if (t >= 1) { tween = null; controls.minDistance = tweenMin; } }
+  function syncDopje() { if (!dopje) return; var e = dopjeS * dopjeS * (3 - 2 * dopjeS); dopje.visible = dopjeS > 0.01; dopje.scale.setScalar(0.4 + 0.6 * e); dopje.position.y = (1 - e) * 0.3; var op = 1 - e; tankMats.forEach(function (m) { m.opacity = op; m.transparent = m.userData.t0 || op < 0.999; }); tankMeshes.forEach(function (o) { o.visible = op > 0.01; }); needs = true; }
+  function stepDopje(now) { if (!dopje) return false; var dt = Math.min(0.06, (now - dopjeT) / 1000) || 0.016; dopjeT = now; var tgt = dopjeOn ? 1 : 0; if (Math.abs(tgt - dopjeS) < 0.003) { if (dopjeS !== tgt) { dopjeS = tgt; syncDopje(); return true; } return false; } dopjeS += (tgt - dopjeS) * (1 - Math.exp(-dt * 6)); syncDopje(); return true; }
   function pauseRotate() { if (controls) controls.autoRotate = false; clearTimeout(resumeT); }
   function scheduleResume() { clearTimeout(resumeT); if (reduce.matches) return; resumeT = setTimeout(function () { if (controls && !disposed) { controls.autoRotate = true; start(); } }, RESUME_AFTER); }
 
   /* ---------- render loop: only while the viewer is on screen and the tab is visible ---------- */
-  function frame(now) { raf = 0; if (!active || disposed) return; if (tween) stepTween(now); var moved = controls.update(); if (moved || needs || tween) { renderer.render(scene, camera); needs = false; } raf = requestAnimationFrame(frame); }
+  function frame(now) { raf = 0; if (!active || disposed) return; if (tween) stepTween(now); var moved = controls.update(); var dp = stepDopje(now); if (moved || needs || tween || dp) { renderer.render(scene, camera); needs = false; } raf = requestAnimationFrame(frame); }
   function start() { active = visible && !document.hidden && !!renderer; if (active && !raf) raf = requestAnimationFrame(frame); }
   function stop() { active = false; if (raf) cancelAnimationFrame(raf); raf = 0; }
   /* the heavy part (three.js and the scene) loads only once the viewer is near the screen AND the visitor has started using the page (scroll, touch, pointer, key), so the first paint stays as light as before */
