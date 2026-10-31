@@ -4,38 +4,569 @@
   "redirects": [
     {
       "source": "/:path(.*)",
-      "has": [{ "type": "host", "value": "fastgasservice.vercel.app" }],
+      "has": [
+        {
+          "type": "host",
+          "value": "fastgasservice.vercel.app"
+        }
+      ],
       "destination": "https://www.fastgasservice.nl/:path",
       "permanent": true
     },
-    { "source": "/index.html", "destination": "/", "permanent": true },
-    { "source": "/:path+/index.html", "destination": "/:path+/", "permanent": true }
+    {
+      "source": "/bezorggebieden",
+      "destination": "/lachgas-bezorgen/",
+      "permanent": true
+    },
+    {
+      "source": "/bezorggebieden/",
+      "destination": "/lachgas-bezorgen/",
+      "permanent": true
+    },
+    {
+      "source": "/fastgas-amsterdam",
+      "destination": "/lachgas-amsterdam/",
+      "permanent": true
+    },
+    {
+      "source": "/fastgas-amsterdam/",
+      "destination": "/lachgas-amsterdam/",
+      "permanent": true
+    },
+    {
+      "source": "/fastgas-bestellen",
+      "destination": "/lachgas-bestellen/",
+      "permanent": true
+    },
+    {
+      "source": "/fastgas-bestellen/",
+      "destination": "/lachgas-bestellen/",
+      "permanent": true
+    },
+    {
+      "source": "/lachgas-amsterdam-24-7",
+      "destination": "/lachgas-amsterdam/",
+      "permanent": true
+    },
+    {
+      "source": "/lachgas-amsterdam-24-7/",
+      "destination": "/lachgas-amsterdam/",
+      "permanent": true
+    },
+    {
+      "source": "/lachgas-amsterdam-bestellen",
+      "destination": "/lachgas-amsterdam/",
+      "permanent": true
+    },
+    {
+      "source": "/lachgas-amsterdam-bestellen/",
+      "destination": "/lachgas-amsterdam/",
+      "permanent": true
+    },
+    {
+      "source": "/lachgas-amsterdam-omstreken",
+      "destination": "/lachgas-bezorgen/",
+      "permanent": true
+    },
+    {
+      "source": "/lachgas-amsterdam-omstreken/",
+      "destination": "/lachgas-bezorgen/",
+      "permanent": true
+    },
+    {
+      "source": "/lachgas-bestellen-24-7",
+      "destination": "/lachgas-bestellen/",
+      "permanent": true
+    },
+    {
+      "source": "/lachgas-bestellen-24-7/",
+      "destination": "/lachgas-bestellen/",
+      "permanent": true
+    },
+    {
+      "source": "/lachgas-bestellen-whatsapp",
+      "destination": "/lachgas-bestellen/",
+      "permanent": true
+    },
+    {
+      "source": "/lachgas-bestellen-whatsapp/",
+      "destination": "/lachgas-bestellen/",
+      "permanent": true
+    },
+    {
+      "source": "/lachgas-bezorgdienst",
+      "destination": "/lachgas-bezorgen/",
+      "permanent": true
+    },
+    {
+      "source": "/lachgas-bezorgdienst/",
+      "destination": "/lachgas-bezorgen/",
+      "permanent": true
+    },
+    {
+      "source": "/lachgas-bezorgen-aalsmeer",
+      "destination": "/lachgas-bezorgen-amstelveen/",
+      "permanent": true
+    },
+    {
+      "source": "/lachgas-bezorgen-aalsmeer/",
+      "destination": "/lachgas-bezorgen-amstelveen/",
+      "permanent": true
+    },
+    {
+      "source": "/lachgas-bezorgen-amsterdam",
+      "destination": "/lachgas-amsterdam/",
+      "permanent": true
+    },
+    {
+      "source": "/lachgas-bezorgen-amsterdam/",
+      "destination": "/lachgas-amsterdam/",
+      "permanent": true
+    },
+    {
+      "source": "/lachgas-bezorgen-baarn",
+      "destination": "/lachgas-bezorgen-amersfoort/",
+      "permanent": true
+    },
+    {
+      "source": "/lachgas-bezorgen-baarn/",
+      "destination": "/lachgas-bezorgen-amersfoort/",
+      "permanent": true
+    },
+    {
+      "source": "/lachgas-bezorgen-beverwijk",
+      "destination": "/lachgas-bezorgen-haarlem/",
+      "permanent": true
+    },
+    {
+      "source": "/lachgas-bezorgen-beverwijk/",
+      "destination": "/lachgas-bezorgen-haarlem/",
+      "permanent": true
+    },
+    {
+      "source": "/lachgas-bezorgen-bilthoven",
+      "destination": "/lachgas-bezorgen-utrecht/",
+      "permanent": true
+    },
+    {
+      "source": "/lachgas-bezorgen-bilthoven/",
+      "destination": "/lachgas-bezorgen-utrecht/",
+      "permanent": true
+    },
+    {
+      "source": "/lachgas-bezorgen-bussum",
+      "destination": "/lachgas-bezorgen-hilversum/",
+      "permanent": true
+    },
+    {
+      "source": "/lachgas-bezorgen-bussum/",
+      "destination": "/lachgas-bezorgen-hilversum/",
+      "permanent": true
+    },
+    {
+      "source": "/lachgas-bezorgen-castricum",
+      "destination": "/lachgas-bezorgen-alkmaar/",
+      "permanent": true
+    },
+    {
+      "source": "/lachgas-bezorgen-castricum/",
+      "destination": "/lachgas-bezorgen-alkmaar/",
+      "permanent": true
+    },
+    {
+      "source": "/lachgas-bezorgen-driebergen",
+      "destination": "/lachgas-bezorgen-utrecht/",
+      "permanent": true
+    },
+    {
+      "source": "/lachgas-bezorgen-driebergen/",
+      "destination": "/lachgas-bezorgen-utrecht/",
+      "permanent": true
+    },
+    {
+      "source": "/lachgas-bezorgen-dronten",
+      "destination": "/lachgas-bezorgen-lelystad/",
+      "permanent": true
+    },
+    {
+      "source": "/lachgas-bezorgen-dronten/",
+      "destination": "/lachgas-bezorgen-lelystad/",
+      "permanent": true
+    },
+    {
+      "source": "/lachgas-bezorgen-emmeloord",
+      "destination": "/lachgas-bezorgen-lelystad/",
+      "permanent": true
+    },
+    {
+      "source": "/lachgas-bezorgen-emmeloord/",
+      "destination": "/lachgas-bezorgen-lelystad/",
+      "permanent": true
+    },
+    {
+      "source": "/lachgas-bezorgen-enkhuizen",
+      "destination": "/lachgas-bezorgen-hoorn/",
+      "permanent": true
+    },
+    {
+      "source": "/lachgas-bezorgen-enkhuizen/",
+      "destination": "/lachgas-bezorgen-hoorn/",
+      "permanent": true
+    },
+    {
+      "source": "/lachgas-bezorgen-heemskerk",
+      "destination": "/lachgas-bezorgen-haarlem/",
+      "permanent": true
+    },
+    {
+      "source": "/lachgas-bezorgen-heemskerk/",
+      "destination": "/lachgas-bezorgen-haarlem/",
+      "permanent": true
+    },
+    {
+      "source": "/lachgas-bezorgen-heemstede",
+      "destination": "/lachgas-bezorgen-haarlem/",
+      "permanent": true
+    },
+    {
+      "source": "/lachgas-bezorgen-heemstede/",
+      "destination": "/lachgas-bezorgen-haarlem/",
+      "permanent": true
+    },
+    {
+      "source": "/lachgas-bezorgen-heerhugowaard",
+      "destination": "/lachgas-bezorgen-alkmaar/",
+      "permanent": true
+    },
+    {
+      "source": "/lachgas-bezorgen-heerhugowaard/",
+      "destination": "/lachgas-bezorgen-alkmaar/",
+      "permanent": true
+    },
+    {
+      "source": "/lachgas-bezorgen-houten",
+      "destination": "/lachgas-bezorgen-utrecht/",
+      "permanent": true
+    },
+    {
+      "source": "/lachgas-bezorgen-houten/",
+      "destination": "/lachgas-bezorgen-utrecht/",
+      "permanent": true
+    },
+    {
+      "source": "/lachgas-bezorgen-huizen",
+      "destination": "/lachgas-bezorgen-hilversum/",
+      "permanent": true
+    },
+    {
+      "source": "/lachgas-bezorgen-huizen/",
+      "destination": "/lachgas-bezorgen-hilversum/",
+      "permanent": true
+    },
+    {
+      "source": "/lachgas-bezorgen-ijmuiden",
+      "destination": "/lachgas-bezorgen-haarlem/",
+      "permanent": true
+    },
+    {
+      "source": "/lachgas-bezorgen-ijmuiden/",
+      "destination": "/lachgas-bezorgen-haarlem/",
+      "permanent": true
+    },
+    {
+      "source": "/lachgas-bezorgen-ijsselstein",
+      "destination": "/lachgas-bezorgen-utrecht/",
+      "permanent": true
+    },
+    {
+      "source": "/lachgas-bezorgen-ijsselstein/",
+      "destination": "/lachgas-bezorgen-utrecht/",
+      "permanent": true
+    },
+    {
+      "source": "/lachgas-bezorgen-laren",
+      "destination": "/lachgas-bezorgen-hilversum/",
+      "permanent": true
+    },
+    {
+      "source": "/lachgas-bezorgen-laren/",
+      "destination": "/lachgas-bezorgen-hilversum/",
+      "permanent": true
+    },
+    {
+      "source": "/lachgas-bezorgen-leusden",
+      "destination": "/lachgas-bezorgen-amersfoort/",
+      "permanent": true
+    },
+    {
+      "source": "/lachgas-bezorgen-leusden/",
+      "destination": "/lachgas-bezorgen-amersfoort/",
+      "permanent": true
+    },
+    {
+      "source": "/lachgas-bezorgen-maarssen",
+      "destination": "/lachgas-bezorgen-utrecht/",
+      "permanent": true
+    },
+    {
+      "source": "/lachgas-bezorgen-maarssen/",
+      "destination": "/lachgas-bezorgen-utrecht/",
+      "permanent": true
+    },
+    {
+      "source": "/lachgas-bezorgen-nieuwegein",
+      "destination": "/lachgas-bezorgen-utrecht/",
+      "permanent": true
+    },
+    {
+      "source": "/lachgas-bezorgen-nieuwegein/",
+      "destination": "/lachgas-bezorgen-utrecht/",
+      "permanent": true
+    },
+    {
+      "source": "/lachgas-bezorgen-soest",
+      "destination": "/lachgas-bezorgen-amersfoort/",
+      "permanent": true
+    },
+    {
+      "source": "/lachgas-bezorgen-soest/",
+      "destination": "/lachgas-bezorgen-amersfoort/",
+      "permanent": true
+    },
+    {
+      "source": "/lachgas-bezorgen-uithoorn",
+      "destination": "/lachgas-bezorgen-amstelveen/",
+      "permanent": true
+    },
+    {
+      "source": "/lachgas-bezorgen-uithoorn/",
+      "destination": "/lachgas-bezorgen-amstelveen/",
+      "permanent": true
+    },
+    {
+      "source": "/lachgas-bezorgen-urk",
+      "destination": "/lachgas-bezorgen-lelystad/",
+      "permanent": true
+    },
+    {
+      "source": "/lachgas-bezorgen-urk/",
+      "destination": "/lachgas-bezorgen-lelystad/",
+      "permanent": true
+    },
+    {
+      "source": "/lachgas-bezorgen-veenendaal",
+      "destination": "/lachgas-bezorgen-amersfoort/",
+      "permanent": true
+    },
+    {
+      "source": "/lachgas-bezorgen-veenendaal/",
+      "destination": "/lachgas-bezorgen-amersfoort/",
+      "permanent": true
+    },
+    {
+      "source": "/lachgas-bezorgen-vianen",
+      "destination": "/lachgas-bezorgen-utrecht/",
+      "permanent": true
+    },
+    {
+      "source": "/lachgas-bezorgen-vianen/",
+      "destination": "/lachgas-bezorgen-utrecht/",
+      "permanent": true
+    },
+    {
+      "source": "/lachgas-bezorgen-volendam",
+      "destination": "/lachgas-bezorgen-purmerend/",
+      "permanent": true
+    },
+    {
+      "source": "/lachgas-bezorgen-volendam/",
+      "destination": "/lachgas-bezorgen-purmerend/",
+      "permanent": true
+    },
+    {
+      "source": "/lachgas-bezorgen-weesp",
+      "destination": "/lachgas-amsterdam/",
+      "permanent": true
+    },
+    {
+      "source": "/lachgas-bezorgen-weesp/",
+      "destination": "/lachgas-amsterdam/",
+      "permanent": true
+    },
+    {
+      "source": "/lachgas-bezorgen-woerden",
+      "destination": "/lachgas-bezorgen-utrecht/",
+      "permanent": true
+    },
+    {
+      "source": "/lachgas-bezorgen-woerden/",
+      "destination": "/lachgas-bezorgen-utrecht/",
+      "permanent": true
+    },
+    {
+      "source": "/lachgas-bezorgen-zandvoort",
+      "destination": "/lachgas-bezorgen-haarlem/",
+      "permanent": true
+    },
+    {
+      "source": "/lachgas-bezorgen-zandvoort/",
+      "destination": "/lachgas-bezorgen-haarlem/",
+      "permanent": true
+    },
+    {
+      "source": "/lachgas-bezorgen-zeewolde",
+      "destination": "/lachgas-bezorgen-almere/",
+      "permanent": true
+    },
+    {
+      "source": "/lachgas-bezorgen-zeewolde/",
+      "destination": "/lachgas-bezorgen-almere/",
+      "permanent": true
+    },
+    {
+      "source": "/lachgas-bezorgen-zeist",
+      "destination": "/lachgas-bezorgen-utrecht/",
+      "permanent": true
+    },
+    {
+      "source": "/lachgas-bezorgen-zeist/",
+      "destination": "/lachgas-bezorgen-utrecht/",
+      "permanent": true
+    },
+    {
+      "source": "/lachgas-cilinder-2000-gram",
+      "destination": "/fastgas-tank-2kg/",
+      "permanent": true
+    },
+    {
+      "source": "/lachgas-cilinder-2000-gram/",
+      "destination": "/fastgas-tank-2kg/",
+      "permanent": true
+    },
+    {
+      "source": "/lachgas-kopen",
+      "destination": "/lachgas-bestellen/",
+      "permanent": true
+    },
+    {
+      "source": "/lachgas-kopen/",
+      "destination": "/lachgas-bestellen/",
+      "permanent": true
+    },
+    {
+      "source": "/lachgas-tank-2kg",
+      "destination": "/fastgas-tank-2kg/",
+      "permanent": true
+    },
+    {
+      "source": "/lachgas-tank-2kg/",
+      "destination": "/fastgas-tank-2kg/",
+      "permanent": true
+    },
+    {
+      "source": "/slagroomspuiten-en-toebehoren",
+      "destination": "/fastgas-tank-aansluiten/",
+      "permanent": true
+    },
+    {
+      "source": "/slagroomspuiten-en-toebehoren/",
+      "destination": "/fastgas-tank-aansluiten/",
+      "permanent": true
+    },
+    {
+      "source": "/werkwijze",
+      "destination": "/lachgas-bestellen/",
+      "permanent": true
+    },
+    {
+      "source": "/werkwijze/",
+      "destination": "/lachgas-bestellen/",
+      "permanent": true
+    },
+    {
+      "source": "/index.html",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/:path+/index.html",
+      "destination": "/:path+/",
+      "permanent": true
+    }
   ],
   "headers": [
     {
       "source": "/(.*)",
       "headers": [
-        { "key": "X-Content-Type-Options", "value": "nosniff" },
-        { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" },
-        { "key": "Permissions-Policy", "value": "camera=(), microphone=(), geolocation=()" }
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "strict-origin-when-cross-origin"
+        },
+        {
+          "key": "Permissions-Policy",
+          "value": "camera=(), microphone=(), geolocation=()"
+        },
+        {
+          "key": "X-Frame-Options",
+          "value": "SAMEORIGIN"
+        }
       ]
     },
     {
       "source": "/manifest.webmanifest",
       "headers": [
-        { "key": "Content-Type", "value": "application/manifest+json; charset=utf-8" },
-        { "key": "Cache-Control", "value": "public, max-age=86400" }
+        {
+          "key": "Content-Type",
+          "value": "application/manifest+json; charset=utf-8"
+        },
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=86400"
+        }
       ]
     },
     {
       "source": "/assets/(.*)",
-      "has": [{ "type": "query", "key": "v" }],
-      "headers": [{ "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }]
+      "has": [
+        {
+          "type": "query",
+          "key": "v"
+        }
+      ],
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
     },
     {
       "source": "/assets/(.*)",
-      "missing": [{ "type": "query", "key": "v" }],
-      "headers": [{ "key": "Cache-Control", "value": "public, max-age=604800, stale-while-revalidate=86400" }]
+      "missing": [
+        {
+          "type": "query",
+          "key": "v"
+        }
+      ],
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=604800, stale-while-revalidate=86400"
+        }
+      ]
+    },
+    {
+      "source": "/llms.txt",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "text/plain; charset=utf-8"
+        }
+      ]
     }
   ]
 }

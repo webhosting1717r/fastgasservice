@@ -193,6 +193,13 @@ footer.foot .credit{flex:1 1 100%;opacity:.7}
 /* ---------- v66: no hidden content without scripting ---------- */
 @media (scripting:none){.rv{opacity:1!important;transform:none!important}}
 
+/* ---------- v70: the floating button container is click-through ---------- */
+html body .fab,html body.intro-done .fab,html body.menu-open .fab{pointer-events:none}
+html body.intro-done .fab .fab-btn{pointer-events:auto}
+html body.menu-open .fab .fab-btn,html body:not(.sub):not(.scrolled-page) .fab .fab-btn{pointer-events:none}
+html body .fab.open .fab-item{pointer-events:auto}
+html body.menu-open .fab .fab-item,html body:not(.sub):not(.scrolled-page) .fab .fab-item{pointer-events:none}
+
 /* ---------- 3D product viewer (subpages) ---------- */
 .v3d-block .v3d-head{text-align:center;max-width:64ch;margin:0 auto}
 .v3d-block .v3d-head .lead{margin-left:auto;margin-right:auto}

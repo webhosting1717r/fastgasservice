@@ -88,13 +88,13 @@
     var run = function () {
       var q = norm(bq.value); bo.className = 'bcheck-out'; if (!q) { bo.textContent = 'Typ je plaats of de eerste vier cijfers van je postcode.'; return; }
       var pc = q.match(/^(\d{4})/);
-      if (pc) { var p = prov(pc[1]); if (p) { bo.className = 'bcheck-out yes'; bo.innerHTML = 'Ja. Postcode ' + pc[1] + ' ligt in ' + p + ': daar bezorgen we dag en nacht, binnen 20 minuten. <a href="' + base + 'bezorggebieden/">Bekijk alle plaatsen</a> of app je adres.'; } else { bo.className = 'bcheck-out no'; bo.innerHTML = 'Postcode ' + pc[1] + ' ligt buiten Noord-Holland, Flevoland en Utrecht. App je adres: voor evenementen en vaste klanten rijden we vaak toch.'; } return; }
+      if (pc) { var p = prov(pc[1]); if (p) { bo.className = 'bcheck-out yes'; bo.innerHTML = 'Ja. Postcode ' + pc[1] + ' ligt in ' + p + ': daar bezorgen we dag en nacht, in Amsterdam binnen 20 minuten en elders meestal binnen het uur. <a href="' + base + 'lachgas-bezorgen/">Bekijk alle plaatsen</a> of app je adres.'; } else { bo.className = 'bcheck-out no'; bo.innerHTML = 'Postcode ' + pc[1] + ' ligt buiten Noord-Holland, Flevoland en Utrecht. App je adres: voor evenementen en vaste klanten rijden we vaak toch.'; } return; }
       if (q.length < 3) { bo.textContent = 'Typ minstens drie letters.'; return; }
       var hit = null, via = null;
       for (var i = 0; i < cities.length && !hit; i++) { var c = cities[i]; if (norm(c.n).indexOf(q) === 0 || norm(c.n) === q) hit = c; }
       for (var j = 0; j < cities.length && !hit; j++) { var c2 = cities[j]; if (norm(c2.n).indexOf(q) >= 0) hit = c2; }
       for (var k = 0; k < cities.length && !hit; k++) { var c3 = cities[k]; for (var w = 0; w < (c3.w || []).length; w++) { if (norm(c3.w[w]).indexOf(q) >= 0) { hit = c3; via = c3.w[w]; break; } } }
-      if (hit) { bo.className = 'bcheck-out yes'; bo.innerHTML = 'Ja. ' + (via ? via + ' (' + hit.n + ')' : hit.n) + ': binnen 20 minuten op locatie, dag en nacht. <a href="' + base + hit.s + '/">Naar lachgas bezorgen ' + hit.n + '</a>.'; }
+      if (hit) { bo.className = 'bcheck-out yes'; bo.innerHTML = 'Ja. ' + (via ? via + ' (' + hit.n + ')' : hit.n) + ': ' + (hit.t || 'binnen 20 minuten') + ' op locatie, dag en nacht. <a href="' + base + hit.s + '/">Bekijk lachgas bezorgen ' + (hit.l || hit.n) + '</a>.'; }
       else { bo.className = 'bcheck-out no'; bo.innerHTML = 'Niet gevonden in onze lijst. Ligt het in Noord-Holland, Flevoland of Utrecht, dan rijden we vrijwel zeker: <a href="#" data-ph="whatsapp">app je adres</a> en je hoort het direct.'; }
     };
     bb.addEventListener('click', run); bq.addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); run(); } }); bq.addEventListener('input', function () { if (bq.value.length >= 4) run(); });
