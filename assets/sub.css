@@ -245,3 +245,6 @@ main .menu-links{opacity:1;transform:none}
 body.sub .block h3{margin:26px 0 8px;font:700 clamp(20px,2.1vw,26px)/1.15 var(--display);text-transform:uppercase;letter-spacing:.02em;color:#fff}
 body.sub .block h3 + p.lead{margin-top:0}
 @media (max-width:820px),(pointer:coarse){body.sub .block h3{font-family:var(--body);font-weight:600;text-transform:none;letter-spacing:-.02em}}
+
+.secimg{margin:18px 0 6px}
+.secimg img{display:block;width:100%;height:auto;border-radius:12px;border:1px solid rgba(217,241,255,.14)}

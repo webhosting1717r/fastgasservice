@@ -13,7 +13,7 @@ body.sub{animation:none}
 /* ---------- menu: four clear topics as grouped lists ---------- */
 .menu-inner.iosm{display:block;max-width:1180px;margin:0 auto;padding:18px clamp(16px,4vw,44px) calc(28px + env(safe-area-inset-bottom))}
 .imenu{display:grid;gap:22px}
-.imenu-g h2{margin:0 0 8px 16px;font:600 13px/1.2 var(--body);letter-spacing:.02em;text-transform:uppercase;color:var(--ios-sub)}
+.imenu-g h2,.imenu-g .imenu-h{margin:0 0 8px 16px;font:600 13px/1.2 var(--body);letter-spacing:.02em;text-transform:uppercase;color:var(--ios-sub)}
 .iosm .mrow{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:22px}
 .iosm .mrow .btn{min-height:50px;border-radius:14px;font:600 16px/1 var(--body);letter-spacing:0;text-transform:none;justify-content:center}
 .iosm .mrow .btn svg{width:19px;height:19px;margin-right:8px}

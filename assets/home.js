@@ -467,7 +467,7 @@ if(cr){ const o=document.getElementById('calcFills'), P=document.getElementById(
 (function(){ const read=n=>{ const m=document.querySelector('meta[name="'+n+'"]'); const raw=m?m.content.trim():''; let digits=raw.replace(/\D/g,''); if(digits.startsWith('00'))digits=digits.slice(2); else if(digits.startsWith('0'))digits='31'+digits.slice(1); const ok=/^\d{9,15}$/.test(digits)&&!/[A-Za-z\[\]]/.test(raw); return {raw,digits,ok}; };
   const tel=read('fg-contact'); const waM=read('fg-whatsapp'); const wa=waM.ok?waM:tel;
   const disp=tel.ok?tel.raw:'[telefoonnummer]'; const dispW=wa.ok?wa.raw:disp;
-  const DEF='Zijn jullie actief?';
+  const DEF='Hallo, ik wil Fastgas 2 kg bestellen. Bedrijfsnaam: … Bezorgadres: … Aantal cilinders: … Gewenst tijdstip: …';
   document.querySelectorAll('[data-ph]').forEach(a=>{ const k=a.dataset.ph; const msg=a.dataset.msg||document.body.dataset.waMsg||DEF; const n=k==='whatsapp'?wa:tel;
     if(n.ok){ a.href=k==='whatsapp'?'https://wa.me/'+n.digits+'?text='+encodeURIComponent(msg):'tel:+'+n.digits; if(k==='whatsapp'){a.target='_blank';a.rel='noopener';} }
     else { a.href='#'; a.setAttribute('aria-disabled','true'); a.addEventListener('click',e=>{ e.preventDefault(); a.classList.remove('nudge'); void a.offsetWidth; a.classList.add('nudge'); }); }
