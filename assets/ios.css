@@ -50,7 +50,7 @@ body.menu-open .top{background:rgba(7,10,16,.985)!important;border-bottom-color:
 .mbar{display:none}
 @media (max-width:820px){
   :root{--mbar-h:calc(64px + env(safe-area-inset-bottom))}
-  .mbar{position:fixed;z-index:6;left:0;right:0;bottom:0;display:grid;grid-template-columns:1fr;gap:10px;padding:10px 14px calc(10px + env(safe-area-inset-bottom));background:rgba(10,14,22,.78);-webkit-backdrop-filter:blur(20px) saturate(180%);backdrop-filter:blur(20px) saturate(180%);border-top:1px solid var(--ios-sep);transition:transform .45s var(--ios-ease),opacity .3s}
+  .mbar{position:fixed;z-index:6;left:0;right:0;bottom:0;display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:10px 14px calc(10px + env(safe-area-inset-bottom));background:rgba(10,14,22,.78);-webkit-backdrop-filter:blur(20px) saturate(180%);backdrop-filter:blur(20px) saturate(180%);border-top:1px solid var(--ios-sep);transition:transform .45s var(--ios-ease),opacity .3s}
   .mbar.away{transform:translateY(110%);opacity:0;pointer-events:none}
   .mbar a{display:flex;align-items:center;justify-content:center;gap:8px;min-height:46px;border-radius:13px;font:600 16px/1 var(--body);text-decoration:none;-webkit-tap-highlight-color:transparent;transition:transform .2s}
   .mbar a:active{transform:scale(.97)}
