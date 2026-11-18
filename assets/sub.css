@@ -235,3 +235,9 @@ html body.menu-open .fab .fab-item,html body:not(.sub):not(.scrolled-page) .fab 
 .v3d-stage.dopje-mode::before{opacity:1}
 /* v69: taps on the view buttons are never swallowed by double-tap zoom or a tap highlight */
 .v3d-views button,.v3d-reset{touch-action:manipulation;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none}
+
+/* v15: linklijsten in de hoofdinhoud (In de buurt, Meer informatie) waren onzichtbaar: de basisregel van .menu-links verbergt ze tot het menu opent */
+main .menu-links{opacity:1;transform:none}
+.lastupd{margin-top:22px;font:500 11px/1.6 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--text-2)}
+.townlist b a{color:inherit;text-decoration:none;border-bottom:1px solid rgba(242,210,27,.55);transition:color .25s,border-color .25s}
+.townlist b a:hover{color:var(--accent);border-color:var(--accent)}
