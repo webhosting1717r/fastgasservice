@@ -145,12 +145,12 @@
     },
     {
       "source": "/lachgas-bezorgen-bilthoven",
-      "destination": "/lachgas-bezorgen-utrecht/",
+      "destination": "/lachgas-utrecht/",
       "permanent": true
     },
     {
       "source": "/lachgas-bezorgen-bilthoven/",
-      "destination": "/lachgas-bezorgen-utrecht/",
+      "destination": "/lachgas-utrecht/",
       "permanent": true
     },
     {
@@ -175,12 +175,12 @@
     },
     {
       "source": "/lachgas-bezorgen-driebergen",
-      "destination": "/lachgas-bezorgen-utrecht/",
+      "destination": "/lachgas-utrecht/",
       "permanent": true
     },
     {
       "source": "/lachgas-bezorgen-driebergen/",
-      "destination": "/lachgas-bezorgen-utrecht/",
+      "destination": "/lachgas-utrecht/",
       "permanent": true
     },
     {
@@ -245,12 +245,12 @@
     },
     {
       "source": "/lachgas-bezorgen-houten",
-      "destination": "/lachgas-bezorgen-utrecht/",
+      "destination": "/lachgas-utrecht/",
       "permanent": true
     },
     {
       "source": "/lachgas-bezorgen-houten/",
-      "destination": "/lachgas-bezorgen-utrecht/",
+      "destination": "/lachgas-utrecht/",
       "permanent": true
     },
     {
@@ -275,12 +275,12 @@
     },
     {
       "source": "/lachgas-bezorgen-ijsselstein",
-      "destination": "/lachgas-bezorgen-utrecht/",
+      "destination": "/lachgas-utrecht/",
       "permanent": true
     },
     {
       "source": "/lachgas-bezorgen-ijsselstein/",
-      "destination": "/lachgas-bezorgen-utrecht/",
+      "destination": "/lachgas-utrecht/",
       "permanent": true
     },
     {
@@ -305,22 +305,22 @@
     },
     {
       "source": "/lachgas-bezorgen-maarssen",
-      "destination": "/lachgas-bezorgen-utrecht/",
+      "destination": "/lachgas-utrecht/",
       "permanent": true
     },
     {
       "source": "/lachgas-bezorgen-maarssen/",
-      "destination": "/lachgas-bezorgen-utrecht/",
+      "destination": "/lachgas-utrecht/",
       "permanent": true
     },
     {
       "source": "/lachgas-bezorgen-nieuwegein",
-      "destination": "/lachgas-bezorgen-utrecht/",
+      "destination": "/lachgas-utrecht/",
       "permanent": true
     },
     {
       "source": "/lachgas-bezorgen-nieuwegein/",
-      "destination": "/lachgas-bezorgen-utrecht/",
+      "destination": "/lachgas-utrecht/",
       "permanent": true
     },
     {
@@ -365,12 +365,12 @@
     },
     {
       "source": "/lachgas-bezorgen-vianen",
-      "destination": "/lachgas-bezorgen-utrecht/",
+      "destination": "/lachgas-utrecht/",
       "permanent": true
     },
     {
       "source": "/lachgas-bezorgen-vianen/",
-      "destination": "/lachgas-bezorgen-utrecht/",
+      "destination": "/lachgas-utrecht/",
       "permanent": true
     },
     {
@@ -395,12 +395,12 @@
     },
     {
       "source": "/lachgas-bezorgen-woerden",
-      "destination": "/lachgas-bezorgen-utrecht/",
+      "destination": "/lachgas-utrecht/",
       "permanent": true
     },
     {
       "source": "/lachgas-bezorgen-woerden/",
-      "destination": "/lachgas-bezorgen-utrecht/",
+      "destination": "/lachgas-utrecht/",
       "permanent": true
     },
     {
@@ -425,12 +425,12 @@
     },
     {
       "source": "/lachgas-bezorgen-zeist",
-      "destination": "/lachgas-bezorgen-utrecht/",
+      "destination": "/lachgas-utrecht/",
       "permanent": true
     },
     {
       "source": "/lachgas-bezorgen-zeist/",
-      "destination": "/lachgas-bezorgen-utrecht/",
+      "destination": "/lachgas-utrecht/",
       "permanent": true
     },
     {
@@ -481,6 +481,16 @@
     {
       "source": "/werkwijze/",
       "destination": "/lachgas-bestellen/",
+      "permanent": true
+    },
+    {
+      "source": "/lachgas-bezorgen-utrecht",
+      "destination": "/lachgas-utrecht/",
+      "permanent": true
+    },
+    {
+      "source": "/lachgas-bezorgen-utrecht/",
+      "destination": "/lachgas-utrecht/",
       "permanent": true
     },
     {

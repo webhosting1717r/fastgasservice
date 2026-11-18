@@ -220,3 +220,15 @@ body.sub section.local .lead + .lead{margin-top:14px}
 footer.foot .legal .nap{flex:1 1 100%;color:#cfd8e4}
 footer.foot .legal .nap a{color:inherit;text-decoration:underline;text-decoration-color:rgba(255,255,255,.25);text-underline-offset:3px}
 @media (pointer:coarse){footer.foot .legal .nap a{display:inline-block;padding:10px 0}}
+/* v2: lange tekst en wijkblokken op ipage-pagina's (Lachgas Amsterdam) */
+.ipage h3{margin:0 0 8px;font:650 clamp(20px,4.8vw,26px)/1.15 var(--body);letter-spacing:-.025em}
+.iprose{max-width:68ch}
+.iprose p{margin:0 0 14px;color:#c3cdd9;font-size:16.5px;line-height:1.55}
+.iprose p:last-child{margin-bottom:0}
+.iprose a,.isub a,.ifaq details p a,.icard p a,.idist p a{color:var(--accent);text-decoration:none;border-bottom:1px solid rgba(242,210,27,.45)}
+.idist{display:grid;gap:12px;margin-top:18px}
+.idist article{display:flex;flex-direction:column;padding:20px;border-radius:var(--ios-r);background:var(--ios-cell);border:1px solid var(--ios-sep)}
+.idist article p{margin:0 0 10px;color:#c3cdd9;font-size:15.5px;line-height:1.5}
+.idist .ilink{margin-top:auto;min-height:40px}
+@media (min-width:760px){.idist{grid-template-columns:1fr 1fr}}
+.isec + .isec > .iprose:first-child{margin-top:-6px}
